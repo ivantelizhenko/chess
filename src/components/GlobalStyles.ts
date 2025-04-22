@@ -147,8 +147,8 @@ html {
   --color-primary: ${COLORS.primary};
   --color-primary-dark: ${COLORS.primaryDark};
   --color-tile-light: ${COLORS.lightTile};
-  --color-tile-light: ${COLORS.lightTile};
-  --color-tile-dark-selected: ${COLORS.darkTileSelected};
+  --color-tile-light-selected: ${COLORS.lightTileSelected};
+  --color-tile-dark: ${COLORS.darkTile};
   --color-tile-dark-selected: ${COLORS.darkTileSelected};
 }
 
