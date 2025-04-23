@@ -1,4 +1,8 @@
-import { BoardType } from '../components/Chess/types/ChessTypes';
+import {
+  BoardType,
+  PieceColor,
+  PieceFigures,
+} from '../components/Chess/types/ChessTypes';
 
 export function createBoard() {
   const startedBoard: BoardType[] = [
@@ -79,4 +83,21 @@ export function fromStringToObject(data: string) {
   const result = Object.fromEntries(entries);
 
   return result;
+}
+
+export function transformFromMyAppToChessLibraryRules(
+  column: BoardType['column'],
+  row: BoardType['row'],
+  name?: PieceFigures,
+  color?: PieceColor
+) {
+  const code = column + row;
+  if (name && color) {
+    const pieceName = name === 'p' ? '' : name;
+    const pieceNameWithColor =
+      color === 'w' ? pieceName.toUpperCase() : pieceName;
+    const codeWithPiece = pieceNameWithColor + code;
+
+    return codeWithPiece;
+  } else return code;
 }

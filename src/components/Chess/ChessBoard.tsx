@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 import Tile from './Tile';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { Chess, Square } from 'chess.js';
 import { useEffect } from 'react';
 import { setPossibleMovesForPiece } from './chessSlice';
+import { showPossibleMovesForPiece } from './service/chess';
 
 function ChessBoard() {
   const dispatch = useAppDispatch();
@@ -13,12 +13,12 @@ function ChessBoard() {
 
   useEffect(() => {
     if (selectedTile) {
-      const chess = new Chess();
-      chess.move('e4');
-      chess.move('e5');
-      const code = selectedTile.column + selectedTile.row;
-      const posibleMoves = chess.moves({ square: code as Square });
-      dispatch(setPossibleMovesForPiece(posibleMoves));
+      const possibleMoves = showPossibleMovesForPiece(
+        selectedTile.column,
+        selectedTile.row
+      );
+      console.log(possibleMoves);
+      dispatch(setPossibleMovesForPiece(possibleMoves));
     }
   }, [selectedTile, dispatch]);
 

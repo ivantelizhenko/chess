@@ -10,7 +10,11 @@ import {
   selectTile,
   setPieceToTile,
 } from './chessSlice';
-import { fromStringToObject } from '../../utils/helpers';
+import {
+  fromStringToObject,
+  transformFromMyAppToChessLibraryRules,
+} from '../../utils/helpers';
+import { doMove, showGame } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
@@ -36,11 +40,25 @@ function Tile({ column, row, piece }: TileProps) {
       piece,
     };
 
-    const pieceName =
-      selectedTile.piece.name === 'p' ? '' : selectedTile.piece.name;
-    const currentMove =
-      piece?.color === 'w' ? pieceName.toUpperCase() : pieceName + column + row;
+    const currentMove = transformFromMyAppToChessLibraryRules(
+      column,
+      row,
+      selectedTile.piece.name,
+      selectedTile.piece.color
+    );
     if (possibleMovesForPiece.includes(currentMove)) {
+      doMove(
+        transformFromMyAppToChessLibraryRules(
+          selectedTile.column,
+          selectedTile.row,
+          selectedTile.piece.name,
+          selectedTile.piece.color
+        ),
+        transformFromMyAppToChessLibraryRules(
+          attacedTile.column,
+          attacedTile.row
+        )
+      );
       dispatch(
         removePieceFromTile({
           column: selectedTile.column,
@@ -57,6 +75,7 @@ function Tile({ column, row, piece }: TileProps) {
       );
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
+      showGame();
     }
   }
 
