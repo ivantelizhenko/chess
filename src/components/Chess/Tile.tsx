@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Chess, Square } from 'chess.js';
 import Piece from './Piece';
-import { TileColor, TileProps } from './ChessTypes';
+import { TileColor, TileProps } from './types/ChessTypes';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
@@ -14,7 +14,6 @@ function Tile({ column, row, piece }: TileProps) {
       .map(item => item.trim()) // прибираємо пробіли з початку і кінця кожного елементу
       .map(item => item.split(':').map(part => part.trim())); // розбиваємо кожну пару по ":" і обрізаємо пробіли
     const result = Object.fromEntries(entries);
-    console.log(result);
     const currentTile = {
       column: result.column,
       row: result.row,

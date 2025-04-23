@@ -1,4 +1,4 @@
-import { BoardType } from '../components/Chess/ChessTypes';
+import { BoardType } from '../components/Chess/types/ChessTypes';
 
 export function createBoard() {
   const startedBoard: BoardType[] = [

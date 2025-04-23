@@ -1,5 +1,6 @@
-import { PieceProps } from './ChessTypes';
-import { pieces } from './pieces';
+import { pieces } from './data/pieces';
+import { PieceProps } from './types/ChessTypes';
+
 import { DragEvent } from 'react';
 
 function Piece({ color, piece, column, row }: PieceProps) {

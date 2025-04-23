@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import Tile from './Tile';
+
 import { useState } from 'react';
 import { createBoard } from '../../utils/helpers';
+import Tile from './Tile';
 
 function ChessBoard() {
   const [board, setBoard] = useState(createBoard());
