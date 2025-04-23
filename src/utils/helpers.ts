@@ -70,3 +70,13 @@ export function createBoard() {
 
   return startedBoard;
 }
+
+export function fromStringToObject(data: string) {
+  const entries = data
+    .split(',')
+    .map(item => item.trim())
+    .map(item => item.split(':').map(part => part.trim()));
+  const result = Object.fromEntries(entries);
+
+  return result;
+}

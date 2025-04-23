@@ -4,59 +4,72 @@ import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
 import { useAppDispatch } from '../../store';
 import { removePieceFromTile, setPieceToTile } from './chessSlice';
+import { fromStringToObject } from '../../utils/helpers';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
-  const color = chess.squareColor(`${column}${row}` as Square) as TileColor;
   const dispatch = useAppDispatch();
-
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-  }
+  const tileColor = chess.squareColor(`${column}${row}` as Square) as TileColor;
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
-    const entries = data
-      .split(',') // ["color: w", " piece: p", " column: c", " row: 2"]
-      .map(item => item.trim()) // прибираємо пробіли з початку і кінця кожного елементу
-      .map(item => item.split(':').map(part => part.trim())); // розбиваємо кожну пару по ":" і обрізаємо пробіли
-    const result = Object.fromEntries(entries);
-    const currentTile = {
+    const result = fromStringToObject(data);
+
+    const selectedTile = {
       column: result.column,
       row: result.row,
-      piece: { name: result.piece, color: result.color },
+      piece: { name: result.name, color: result.color },
     };
     const attacedTile = {
       column,
       row,
       piece,
     };
-    console.log(currentTile);
-    console.log(attacedTile);
+    dispatch(
+      removePieceFromTile({
+        column: selectedTile.column,
+        row: selectedTile.row,
+      })
+    );
     dispatch(
       setPieceToTile({
         column: attacedTile.column,
         row: attacedTile.row,
-        name: currentTile.piece.name,
-        color: currentTile.piece.color,
-      })
-    );
-    dispatch(
-      removePieceFromTile({
-        column: currentTile.column,
-        row: currentTile.row,
+        name: selectedTile.piece.name,
+        color: selectedTile.piece.color,
       })
     );
   }
 
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+  }
+
+  function handleDragStart(e: React.DragEvent<HTMLDivElement>) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData(
+      'text/plain',
+      `color: ${piece?.color}, name: ${piece?.name}, column: ${column}, row: ${row}`
+    );
+
+    setTimeout(() => {
+      (e.target as HTMLDivElement).style.display = 'none';
+    }, 0);
+  }
+
+  function handleDragEnd(e: React.DragEvent<HTMLDivElement>) {
+    (e.target as HTMLDivElement).style.display = 'block';
+  }
+
   return (
-    <Wrapper $light={color} onDrop={handleDrop} onDragOver={handleDragOver}>
+    <Wrapper $light={tileColor} onDrop={handleDrop} onDragOver={handleDragOver}>
       {piece?.name && (
         <Piece
           piece={piece.name}
           color={piece.color}
-          column={column}
-          row={row}
+          draggable={true}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
         />
       )}
     </Wrapper>

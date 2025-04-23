@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   display: grid;
   place-content: center;
   height: 100%;
-  background-color: lightblue;
+  background-color: var(--color-gray-800);
 `;
 
 export default App;
