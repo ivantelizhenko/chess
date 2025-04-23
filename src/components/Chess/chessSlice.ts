@@ -11,7 +11,7 @@ import {
 const initialState: StateType = {
   board: createBoard(),
   selectedTile: null,
-  posibleMovesForPiece: [],
+  possibleMovesForPiece: [],
 };
 
 const chessSlice = createSlice({
@@ -62,7 +62,7 @@ const chessSlice = createSlice({
       state.selectedTile = null;
     },
     setPossibleMovesForPiece(state, action: PayloadAction<PosibleMoveType[]>) {
-      state.posibleMovesForPiece = action.payload;
+      state.possibleMovesForPiece = action.payload;
     },
   },
 });

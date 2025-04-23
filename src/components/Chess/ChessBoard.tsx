@@ -18,14 +18,12 @@ function ChessBoard() {
       const code = selectedTile.column + selectedTile.row;
       const posibleMoves = chess.moves({ square: code as Square }).map(cord => {
         const data = cord.split('');
-        console.log(data);
         return {
           name: data.at(-3)?.toLowerCase() || 'p',
           column: data.at(-2),
           row: data.at(-1),
         };
       }) as PosibleMoveType[];
-      console.log(posibleMoves);
       dispatch(setPossibleMovesForPiece(posibleMoves));
     }
   }, [selectedTile, dispatch]);

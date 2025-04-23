@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Chess, Square } from 'chess.js';
 import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
@@ -16,6 +16,9 @@ function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
   const tileColor = chess.squareColor(`${column}${row}` as Square) as TileColor;
   const selectedTile = useAppSelector(state => state.chess.selectedTile);
+  const possibleMovesForPiece = useAppSelector(
+    state => state.chess.possibleMovesForPiece
+  );
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
@@ -82,6 +85,9 @@ function Tile({ column, row, piece }: TileProps) {
       onDragOver={handleDragOver}
       onClick={handleSelectTile}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
+      $possibleMove={possibleMovesForPiece
+        .map(obj => obj.column + obj.row)
+        .includes(column + row)}
     >
       {piece?.name && (
         <Piece
@@ -96,9 +102,14 @@ function Tile({ column, row, piece }: TileProps) {
   );
 }
 
-const Wrapper = styled.div<{ $light: TileColor; $isSelected: boolean }>`
+const Wrapper = styled.div<{
+  $light: TileColor;
+  $isSelected: boolean;
+  $possibleMove: boolean;
+}>`
   width: var(--tile-width);
   aspect-ratio: 1/1;
+  position: relative;
   background-color: ${props =>
     props.$light === 'light'
       ? props.$isSelected
@@ -107,6 +118,25 @@ const Wrapper = styled.div<{ $light: TileColor; $isSelected: boolean }>`
       : props.$isSelected
       ? 'var(--color-tile-dark-selected)'
       : 'var(--color-tile-dark)'};
+
+  ${props =>
+    props.$possibleMove &&
+    css`
+      &::after {
+        content: '';
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        width: 32%;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        background-color: ${props.$light === 'light'
+          ? 'var(--color-gray-600)'
+          : 'var(--color-gray-800)'};
+        opacity: 20%;
+      }
+    `}
 `;
 
 export default Tile;
