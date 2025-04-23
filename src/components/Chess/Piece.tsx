@@ -1,12 +1,10 @@
 import { pieces } from './data/pieces';
 import { PieceProps } from './types/ChessTypes';
 
-import { DragEvent } from 'react';
-
-function Piece({ color, piece, column, row }: PieceProps) {
+function Piece({ color, piece, column, row, ...delegated }: PieceProps) {
   const Component = pieces[color][piece];
 
-  function handleDragStart(e: DragEvent) {
+  function handleDragStart(e: React.DragEvent<HTMLDivElement>) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData(
       'text/plain',
@@ -28,9 +26,9 @@ function Piece({ color, piece, column, row }: PieceProps) {
 
   return (
     <div
+      {...delegated} // onDragEnd={handleDragEnd}
       draggable={true}
       onDragStart={handleDragStart}
-      // onDragEnd={handleDragEnd}
     >
       <Component />
     </div>

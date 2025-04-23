@@ -19,7 +19,7 @@ export type TileProps = {
   piece: PieceType | null;
 };
 
-export interface PieceProps {
+export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
   color: PieceColor;
   piece: PieceFigures;
   column: BoardType['column'];

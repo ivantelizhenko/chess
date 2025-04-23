@@ -1,17 +1,14 @@
 import styled from 'styled-components';
 
-import { useState } from 'react';
-import { createBoard } from '../../utils/helpers';
 import Tile from './Tile';
+import { useAppSelector } from '../../store';
 
 function ChessBoard() {
-  const [board, setBoard] = useState(createBoard());
-  // const chess = new Chess();
-  // const posibleMoves = chess.moves()
+  const stateBoard = useAppSelector(state => state.chess.board);
 
   return (
     <Wrapper>
-      {board.map(delegated => (
+      {stateBoard.map(delegated => (
         <Tile key={delegated.column + delegated.row} {...delegated} />
       ))}
     </Wrapper>

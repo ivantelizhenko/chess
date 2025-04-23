@@ -2,10 +2,17 @@ import styled from 'styled-components';
 import { Chess, Square } from 'chess.js';
 import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
+import { useAppDispatch } from '../../store';
+import { removePieceFromTile, setPieceToTile } from './chessSlice';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
   const color = chess.squareColor(`${column}${row}` as Square) as TileColor;
+  const dispatch = useAppDispatch();
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+  }
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
@@ -26,10 +33,20 @@ function Tile({ column, row, piece }: TileProps) {
     };
     console.log(currentTile);
     console.log(attacedTile);
-  }
-
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
+    dispatch(
+      setPieceToTile({
+        column: attacedTile.column,
+        row: attacedTile.row,
+        name: currentTile.piece.name,
+        color: currentTile.piece.color,
+      })
+    );
+    dispatch(
+      removePieceFromTile({
+        column: currentTile.column,
+        row: currentTile.row,
+      })
+    );
   }
 
   return (
