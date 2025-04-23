@@ -2,14 +2,20 @@ import styled from 'styled-components';
 import { Chess, Square } from 'chess.js';
 import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
-import { useAppDispatch } from '../../store';
-import { removePieceFromTile, setPieceToTile } from './chessSlice';
+import { useAppDispatch, useAppSelector } from '../../store';
+import {
+  clearSelectedTile,
+  removePieceFromTile,
+  selectTile,
+  setPieceToTile,
+} from './chessSlice';
 import { fromStringToObject } from '../../utils/helpers';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
   const dispatch = useAppDispatch();
   const tileColor = chess.squareColor(`${column}${row}` as Square) as TileColor;
+  const selectedTile = useAppSelector(state => state.chess.selectedTile);
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
@@ -39,6 +45,7 @@ function Tile({ column, row, piece }: TileProps) {
         color: selectedTile.piece.color,
       })
     );
+    dispatch(clearSelectedTile());
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -55,14 +62,27 @@ function Tile({ column, row, piece }: TileProps) {
     setTimeout(() => {
       (e.target as HTMLDivElement).style.display = 'none';
     }, 0);
+    handleSelectTile();
   }
 
   function handleDragEnd(e: React.DragEvent<HTMLDivElement>) {
     (e.target as HTMLDivElement).style.display = 'block';
   }
 
+  function handleSelectTile() {
+    if (piece?.name && piece.color) {
+      dispatch(selectTile({ column, row }));
+    }
+  }
+
   return (
-    <Wrapper $light={tileColor} onDrop={handleDrop} onDragOver={handleDragOver}>
+    <Wrapper
+      $light={tileColor}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onClick={handleSelectTile}
+      $isSelected={selectedTile?.column === column && selectedTile?.row === row}
+    >
       {piece?.name && (
         <Piece
           piece={piece.name}
@@ -76,12 +96,16 @@ function Tile({ column, row, piece }: TileProps) {
   );
 }
 
-const Wrapper = styled.div<{ $light: TileColor }>`
+const Wrapper = styled.div<{ $light: TileColor; $isSelected: boolean }>`
   width: var(--tile-width);
   aspect-ratio: 1/1;
   background-color: ${props =>
     props.$light === 'light'
-      ? 'var(--color-tile-light)'
+      ? props.$isSelected
+        ? 'var(--color-tile-light-selected)'
+        : 'var(--color-tile-light)'
+      : props.$isSelected
+      ? 'var(--color-tile-dark-selected)'
       : 'var(--color-tile-dark)'};
 `;
 

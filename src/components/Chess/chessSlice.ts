@@ -1,9 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
-import { BoardType, PieceColor, PieceFigures } from './types/ChessTypes';
+import {
+  BoardType,
+  PieceColor,
+  PieceFigures,
+  PosibleMoveType,
+  StateType,
+} from './types/ChessTypes';
 
-const initialState = {
+const initialState: StateType = {
   board: createBoard(),
+  selectedTile: null,
+  posibleMovesForPiece: [],
 };
 
 const chessSlice = createSlice({
@@ -38,9 +46,33 @@ const chessSlice = createSlice({
           tile.row === action.payload.row
       )!.piece = null;
     },
+    selectTile(
+      state,
+      action: PayloadAction<{
+        column: BoardType['column'];
+        row: BoardType['row'];
+      }>
+    ) {
+      state.selectedTile = {
+        column: action.payload.column,
+        row: action.payload.row,
+      };
+    },
+    clearSelectedTile(state) {
+      state.selectedTile = null;
+    },
+    setPossibleMovesForPiece(state, action: PayloadAction<PosibleMoveType[]>) {
+      state.posibleMovesForPiece = action.payload;
+    },
   },
 });
 
-export const { setPieceToTile, removePieceFromTile } = chessSlice.actions;
+export const {
+  setPieceToTile,
+  removePieceFromTile,
+  selectTile,
+  clearSelectedTile,
+  setPossibleMovesForPiece,
+} = chessSlice.actions;
 
 export default chessSlice.reducer;

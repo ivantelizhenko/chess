@@ -1,10 +1,34 @@
 import styled from 'styled-components';
 
 import Tile from './Tile';
-import { useAppSelector } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { Chess, Square } from 'chess.js';
+import { useEffect } from 'react';
+import { setPossibleMovesForPiece } from './chessSlice';
+import { PosibleMoveType } from './types/ChessTypes';
 
 function ChessBoard() {
+  const dispatch = useAppDispatch();
   const stateBoard = useAppSelector(state => state.chess.board);
+  const selectedTile = useAppSelector(state => state.chess.selectedTile);
+
+  useEffect(() => {
+    if (selectedTile) {
+      const chess = new Chess();
+      const code = selectedTile.column + selectedTile.row;
+      const posibleMoves = chess.moves({ square: code as Square }).map(cord => {
+        const data = cord.split('');
+        console.log(data);
+        return {
+          name: data.at(-3)?.toLowerCase() || 'p',
+          column: data.at(-2),
+          row: data.at(-1),
+        };
+      }) as PosibleMoveType[];
+      console.log(posibleMoves);
+      dispatch(setPossibleMovesForPiece(posibleMoves));
+    }
+  }, [selectedTile, dispatch]);
 
   return (
     <Wrapper>
