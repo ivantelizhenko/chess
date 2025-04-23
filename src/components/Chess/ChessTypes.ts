@@ -22,4 +22,6 @@ export type TileProps = {
 export interface PieceProps {
   color: PieceColor;
   piece: PieceFigures;
+  column: BoardType['column'];
+  row: BoardType['row'];
 }

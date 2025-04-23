@@ -1,6 +1,11 @@
-function QueenBlack() {
+function QueenBlack({ ...delegated }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      viewBox="0 0 45 45"
+      {...delegated}
+    >
       <g
         fill="#000000"
         stroke="#000000"

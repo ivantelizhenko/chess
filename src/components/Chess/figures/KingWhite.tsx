@@ -1,6 +1,6 @@
-function KingWhite() {
+function KingWhite({ ...delegated }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" {...delegated}>
       <g
         fill="none"
         fillRule="evenodd"

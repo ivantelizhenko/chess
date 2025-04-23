@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { COLORS } from '../constants';
+import { COLORS, TILE_WIDTH } from '../utils/constants';
 
 const GlobalStyles = createGlobalStyle`
 /* http://meyerweb.com/eric/tools/css/reset/
@@ -150,6 +150,8 @@ html {
   --color-tile-light-selected: ${COLORS.lightTileSelected};
   --color-tile-dark: ${COLORS.darkTile};
   --color-tile-dark-selected: ${COLORS.darkTileSelected};
+
+  --tile-width: ${TILE_WIDTH};
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -1,6 +1,11 @@
-function RookWhite() {
+function RookWhite({ ...delegated }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 45 45">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      viewBox="0 0 45 45"
+      {...delegated}
+    >
       <g
         opacity="1"
         fill="#ffffff"
