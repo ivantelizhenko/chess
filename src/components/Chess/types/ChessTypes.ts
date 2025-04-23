@@ -27,11 +27,11 @@ export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
 export type StateType = {
   board: BoardType[];
   selectedTile: { column: BoardType['column']; row: BoardType['row'] } | null;
-  possibleMovesForPiece: PosibleMoveType[] | [];
+  possibleMovesForPiece: string[];
 };
 
-export type PosibleMoveType = {
-  name: PieceFigures;
-  column: BoardType['column'];
-  row: BoardType['row'];
-};
+// export type PosibleMoveType = {
+//   name: PieceFigures;
+//   column: BoardType['column'];
+//   row: BoardType['row'];
+// };

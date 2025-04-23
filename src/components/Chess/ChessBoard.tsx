@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Chess, Square } from 'chess.js';
 import { useEffect } from 'react';
 import { setPossibleMovesForPiece } from './chessSlice';
-import { PosibleMoveType } from './types/ChessTypes';
 
 function ChessBoard() {
   const dispatch = useAppDispatch();
@@ -15,15 +14,10 @@ function ChessBoard() {
   useEffect(() => {
     if (selectedTile) {
       const chess = new Chess();
+      chess.move('e4');
+      chess.move('e5');
       const code = selectedTile.column + selectedTile.row;
-      const posibleMoves = chess.moves({ square: code as Square }).map(cord => {
-        const data = cord.split('');
-        return {
-          name: data.at(-3)?.toLowerCase() || 'p',
-          column: data.at(-2),
-          row: data.at(-1),
-        };
-      }) as PosibleMoveType[];
+      const posibleMoves = chess.moves({ square: code as Square });
       dispatch(setPossibleMovesForPiece(posibleMoves));
     }
   }, [selectedTile, dispatch]);

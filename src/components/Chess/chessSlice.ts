@@ -4,7 +4,6 @@ import {
   BoardType,
   PieceColor,
   PieceFigures,
-  PosibleMoveType,
   StateType,
 } from './types/ChessTypes';
 
@@ -61,8 +60,11 @@ const chessSlice = createSlice({
     clearSelectedTile(state) {
       state.selectedTile = null;
     },
-    setPossibleMovesForPiece(state, action: PayloadAction<PosibleMoveType[]>) {
+    setPossibleMovesForPiece(state, action: PayloadAction<string[]>) {
       state.possibleMovesForPiece = action.payload;
+    },
+    clearPossibleMoves(state) {
+      state.possibleMovesForPiece = [];
     },
   },
 });
@@ -73,6 +75,7 @@ export const {
   selectTile,
   clearSelectedTile,
   setPossibleMovesForPiece,
+  clearPossibleMoves,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

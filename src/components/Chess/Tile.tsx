@@ -4,6 +4,7 @@ import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
+  clearPossibleMoves,
   clearSelectedTile,
   removePieceFromTile,
   selectTile,
@@ -34,21 +35,29 @@ function Tile({ column, row, piece }: TileProps) {
       row,
       piece,
     };
-    dispatch(
-      removePieceFromTile({
-        column: selectedTile.column,
-        row: selectedTile.row,
-      })
-    );
-    dispatch(
-      setPieceToTile({
-        column: attacedTile.column,
-        row: attacedTile.row,
-        name: selectedTile.piece.name,
-        color: selectedTile.piece.color,
-      })
-    );
-    dispatch(clearSelectedTile());
+
+    const pieceName =
+      selectedTile.piece.name === 'p' ? '' : selectedTile.piece.name;
+    const currentMove =
+      piece?.color === 'w' ? pieceName.toUpperCase() : pieceName + column + row;
+    if (possibleMovesForPiece.includes(currentMove)) {
+      dispatch(
+        removePieceFromTile({
+          column: selectedTile.column,
+          row: selectedTile.row,
+        })
+      );
+      dispatch(
+        setPieceToTile({
+          column: attacedTile.column,
+          row: attacedTile.row,
+          name: selectedTile.piece.name,
+          color: selectedTile.piece.color,
+        })
+      );
+      dispatch(clearSelectedTile());
+      dispatch(clearPossibleMoves());
+    }
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -80,13 +89,13 @@ function Tile({ column, row, piece }: TileProps) {
 
   return (
     <Wrapper
-      $light={tileColor}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onClick={handleSelectTile}
+      $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
       $possibleMove={possibleMovesForPiece
-        .map(obj => obj.column + obj.row)
+        .map(cords => (cords.length > 2 ? cords.slice(1) : cords))
         .includes(column + row)}
     >
       {piece?.name && (
