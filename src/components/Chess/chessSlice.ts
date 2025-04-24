@@ -37,11 +37,8 @@ const chessSlice = createSlice({
           tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
     },
-    selectTile(state, action: PayloadAction<TileWithoutPieceType>) {
-      state.selectedTile = {
-        column: action.payload.column,
-        row: action.payload.row,
-      };
+    selectTile(state, action: PayloadAction<TileType>) {
+      state.selectedTile = action.payload;
     },
     clearSelectedTile(state) {
       state.selectedTile = null;

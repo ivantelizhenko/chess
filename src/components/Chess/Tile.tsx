@@ -24,7 +24,7 @@ function Tile({ column, row, piece }: TileProps) {
     state => state.chess
   );
 
-  function triggerhandleMove(
+  function handleMove(
     selectedTile: TileType,
     attackedTileObject: TileWithoutPieceType,
     attackedTileString: string
@@ -39,25 +39,22 @@ function Tile({ column, row, piece }: TileProps) {
     dispatch(setPrevMoves(showPrevMove()));
   }
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
-    const data = e.dataTransfer!.getData('text');
-    const result = JSON.parse(data);
-    const selectedTile = {
-      column: result.column,
-      row: result.row,
-      piece: { name: result.name, color: result.color },
-    };
+  function handleDrop() {
     const attackedTileString = column + row;
     const attackedTileObject = { column, row };
 
     if (possibleMovesForPiece.includes(attackedTileString)) {
-      triggerhandleMove(selectedTile, attackedTileObject, attackedTileString);
+      handleMove(
+        selectedTile as TileType,
+        attackedTileObject,
+        attackedTileString
+      );
     }
   }
 
   function handleSelectTile() {
     if (piece?.name && piece.color) {
-      dispatch(selectTile({ column, row }));
+      dispatch(selectTile({ column, row, piece }));
     }
   }
 
