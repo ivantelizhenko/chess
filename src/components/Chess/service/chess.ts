@@ -4,9 +4,9 @@ const chess = new Chess();
 
 export function showPossibleMovesForPiece(column: string, row: string) {
   const code = column + row;
-  const posibleMoves = chess.moves({ square: code as Square }).map(move => {
-    return move.at(-2)! + move.at(-1);
-  });
+  const posibleMoves = chess
+    .moves({ square: code as Square, verbose: true })
+    .map(move => move.to);
   console.log(posibleMoves);
   return posibleMoves;
 }
