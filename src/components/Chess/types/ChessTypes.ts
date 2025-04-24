@@ -4,7 +4,7 @@ export type PieceColor = 'w' | 'b';
 export type PieceFigures = 'p' | 'n' | 'r' | 'b' | 'q' | 'k';
 export type TileColor = 'light' | 'dark';
 
-interface PieceType {
+export interface PieceType {
   name: PieceFigures;
   color: PieceColor;
 }
@@ -30,7 +30,6 @@ export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
 export type StateType = {
   board: TileProps[];
   selectedTile: TileType | null;
-  attackedTile: TileWithoutPieceType | null;
   possibleMovesForPiece: string[];
   prevMoves: string[];
 };

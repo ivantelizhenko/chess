@@ -5,8 +5,14 @@ const chess = new Chess();
 export function showPossibleMovesForPiece(column: string, row: string) {
   const code = column + row;
   const possibleMoves = chess.moves({ square: code as Square, verbose: true });
-  const result = possibleMoves.map(move => move.to);
-  return result;
+  const result = possibleMoves.map(move => {
+    return move.to;
+  });
+  const castling = possibleMoves
+    .map(move => move.san)
+    .filter(move => move.includes('0'));
+
+  return [result, castling];
 }
 
 export function doMove(codeFrom: string, codeTo: string) {
@@ -28,4 +34,8 @@ export function showPrevMove() {
 export function showTileColor(code: string) {
   const color = chess.squareColor(code as Square);
   return color;
+}
+
+export function showGame() {
+  console.log(chess.ascii());
 }

@@ -1,11 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
-import { StateType, TileType, TileWithoutPieceType } from './types/ChessTypes';
+import {
+  PieceColor,
+  StateType,
+  TileType,
+  TileWithoutPieceType,
+} from './types/ChessTypes';
 
 const initialState: StateType = {
   board: createBoard(),
   selectedTile: null,
-  attackedTile: null,
   possibleMovesForPiece: [],
   prevMoves: [],
 };
@@ -38,17 +42,41 @@ const chessSlice = createSlice({
           tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
     },
+    doCastling(
+      state,
+      action: PayloadAction<{ type: '0-0' | '0-0-0'; color: PieceColor }>
+    ) {
+      const is00 = action.payload.type === '0-0';
+      const row = action.payload.color === 'w' ? '1' : '8';
+
+      // Перемістити короля
+      state.board.find(
+        tile => tile.column === (is00 ? 'g' : 'e') && tile.row === row
+      )!.piece = {
+        name: 'k',
+        color: action.payload.color,
+      };
+
+      state.board.find(tile => tile.column === 'e' && tile.row === row)!.piece =
+        null;
+
+      // Перемістити туру
+      state.board.find(
+        tile => tile.column === (is00 ? 'f' : 'd') && tile.row === row
+      )!.piece = {
+        name: 'r',
+        color: action.payload.color,
+      };
+
+      state.board.find(
+        tile => tile.column === (is00 ? 'h' : 'a') && tile.row === row
+      )!.piece = null;
+    },
     setSelectedTile(state, action: PayloadAction<TileType>) {
       state.selectedTile = action.payload;
     },
     clearSelectedTile(state) {
       state.selectedTile = null;
-    },
-    setAttackedTile(state, action: PayloadAction<TileWithoutPieceType>) {
-      state.attackedTile = action.payload;
-    },
-    clearAttackedTile(state) {
-      state.attackedTile = null;
     },
     setPossibleMovesForPiece(state, action: PayloadAction<string[]>) {
       state.possibleMovesForPiece = action.payload;
@@ -64,10 +92,9 @@ const chessSlice = createSlice({
 
 export const {
   movePiece,
+  doCastling,
   setSelectedTile,
   clearSelectedTile,
-  setAttackedTile,
-  clearAttackedTile,
   setPossibleMovesForPiece,
   clearPossibleMoves,
   setPrevMoves,

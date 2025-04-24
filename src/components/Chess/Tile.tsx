@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import Piece from './Piece';
-import { TileColor, TileProps, TileWithoutPieceType } from './types/ChessTypes';
+import { PieceType, TileColor, TileProps } from './types/ChessTypes';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
   clearPossibleMoves,
@@ -8,11 +8,10 @@ import {
   movePiece,
   setSelectedTile,
   setPrevMoves,
-  setAttackedTile,
-  clearAttackedTile,
+  doCastling,
 } from './chessSlice';
 import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showPrevMove, showTileColor } from './service/chess';
+import { doMove, showGame, showPrevMove, showTileColor } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
@@ -21,37 +20,34 @@ function Tile({ column, row, piece }: TileProps) {
     state => state.chess
   );
   const isPossibleMove = possibleMovesForPiece.includes(column + row);
-  const isSelected =
-    selectedTile?.column === column && selectedTile?.row === row;
 
-  function handleMove(
-    attackedTileObject: TileWithoutPieceType,
-    attackedTileString: string
-  ) {
-    if (selectedTile) {
-      dispatch(
-        movePiece({
-          selectedTile,
-          attackedTile: attackedTileObject,
-        })
-      );
-      dispatch(clearSelectedTile());
-      dispatch(clearPossibleMoves());
-
+  function handleMove() {
+    const attackedTileString = column + row;
+    const attackedTile = { column, row };
+    if (selectedTile && isPossibleMove) {
       // 1. Зробити крок в chess.js
       doMove(transformObjectToSAN(selectedTile), attackedTileString);
       // 2. Отримати інформацію про цей крок з історії кроків з chess.js
       dispatch(setPrevMoves(showPrevMove()));
+      console.log(showPrevMove());
+      dispatch(
+        movePiece({
+          selectedTile,
+          attackedTile,
+        })
+      );
+
+      // dispatch(doCastling({ type: '0-0', color: (piece as PieceType).color }));
+
+      dispatch(clearSelectedTile());
+      dispatch(clearPossibleMoves());
+
+      showGame();
     }
   }
 
   function handleDrop() {
-    const attackedTileString = column + row;
-    const attackedTileObject = { column, row };
-
-    if (possibleMovesForPiece.includes(attackedTileString)) {
-      handleMove(attackedTileObject, attackedTileString);
-    }
+    handleMove();
   }
 
   function handleSetSelectedTile() {
@@ -60,24 +56,12 @@ function Tile({ column, row, piece }: TileProps) {
     }
   }
 
-  function handleSetAttackedTile() {
-    if (isPossibleMove) {
-      dispatch(setAttackedTile({ column, row }));
-    } else dispatch(clearAttackedTile());
-  }
-
   function handleClick() {
-    handleSetAttackedTile();
     handleSetSelectedTile();
+    handleMove();
   }
 
   function handleDragStart(e: React.DragEvent<HTMLDivElement>) {
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData(
-      'text/plain',
-      JSON.stringify({ color: piece?.color, name: piece?.name, column, row })
-    );
-
     setTimeout(() => {
       (e.target as HTMLDivElement).style.display = 'none';
     }, 0);
@@ -94,7 +78,7 @@ function Tile({ column, row, piece }: TileProps) {
       onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
       onClick={handleClick}
       $light={tileColor}
-      $isSelected={isSelected}
+      $isSelected={selectedTile?.column === column && selectedTile?.row === row}
       $isPrevMove={prevMoves.includes(column + row)}
       $possibleMove={isPossibleMove}
     >
