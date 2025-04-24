@@ -9,20 +9,20 @@ import {
   removePieceFromTile,
   selectTile,
   setPieceToTile,
+  setPrevMoves,
 } from './chessSlice';
 import {
   fromStringToObject,
   transformFromMyAppToChessLibraryRules,
 } from '../../utils/helpers';
-import { doMove, showGame } from './service/chess';
+import { doMove, showPrevMove } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const chess = new Chess();
   const dispatch = useAppDispatch();
   const tileColor = chess.squareColor(`${column}${row}` as Square) as TileColor;
-  const selectedTile = useAppSelector(state => state.chess.selectedTile);
-  const possibleMovesForPiece = useAppSelector(
-    state => state.chess.possibleMovesForPiece
+  const { selectedTile, possibleMovesForPiece, prevMoves } = useAppSelector(
+    state => state.chess
   );
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -42,7 +42,6 @@ function Tile({ column, row, piece }: TileProps) {
 
     const currentMove = transformFromMyAppToChessLibraryRules(column, row);
 
-    console.log(currentMove);
     if (possibleMovesForPiece.includes(currentMove)) {
       dispatch(
         removePieceFromTile({
@@ -73,7 +72,7 @@ function Tile({ column, row, piece }: TileProps) {
           attacedTile.row
         )
       );
-      showGame();
+      dispatch(setPrevMoves(showPrevMove()));
     }
   }
 
@@ -111,6 +110,7 @@ function Tile({ column, row, piece }: TileProps) {
       onClick={handleSelectTile}
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
+      $isPrevMove={prevMoves.includes(column + row)}
       $possibleMove={possibleMovesForPiece.includes(column + row)}
     >
       {piece?.name && (
@@ -130,16 +130,17 @@ const Wrapper = styled.div<{
   $light: TileColor;
   $isSelected: boolean;
   $possibleMove: boolean;
+  $isPrevMove: boolean;
 }>`
   width: var(--tile-width);
   aspect-ratio: 1/1;
   position: relative;
   background-color: ${props =>
     props.$light === 'light'
-      ? props.$isSelected
+      ? props.$isSelected || props.$isPrevMove
         ? 'var(--color-tile-light-selected)'
         : 'var(--color-tile-light)'
-      : props.$isSelected
+      : props.$isSelected || props.$isPrevMove
       ? 'var(--color-tile-dark-selected)'
       : 'var(--color-tile-dark)'};
 

@@ -11,6 +11,7 @@ const initialState: StateType = {
   board: createBoard(),
   selectedTile: null,
   possibleMovesForPiece: [],
+  prevMoves: [],
 };
 
 const chessSlice = createSlice({
@@ -66,6 +67,9 @@ const chessSlice = createSlice({
     clearPossibleMoves(state) {
       state.possibleMovesForPiece = [];
     },
+    setPrevMoves(state, action: PayloadAction<string[]>) {
+      state.prevMoves = action.payload;
+    },
   },
 });
 
@@ -76,6 +80,7 @@ export const {
   clearSelectedTile,
   setPossibleMovesForPiece,
   clearPossibleMoves,
+  setPrevMoves,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

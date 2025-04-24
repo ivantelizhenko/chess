@@ -30,6 +30,7 @@ export type StateType = {
   board: BoardType[];
   selectedTile: { column: ColumnType; row: BoardType['row'] } | null;
   possibleMovesForPiece: string[];
+  prevMoves: string[];
 };
 
 // export type PosibleMoveType = {
