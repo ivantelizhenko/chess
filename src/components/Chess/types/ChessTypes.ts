@@ -32,9 +32,3 @@ export type StateType = {
   possibleMovesForPiece: string[];
   prevMoves: string[];
 };
-
-// export type PosibleMoveType = {
-//   name: PieceFigures;
-//   column: BoardType['column'];
-//   row: BoardType['row'];
-// };

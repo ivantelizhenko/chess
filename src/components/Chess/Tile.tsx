@@ -1,90 +1,58 @@
 import styled, { css } from 'styled-components';
-import { Chess, Square } from 'chess.js';
 import Piece from './Piece';
 import { TileColor, TileProps } from './types/ChessTypes';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
   clearPossibleMoves,
   clearSelectedTile,
-  removePieceFromTile,
+  movePiece,
   selectTile,
-  setPieceToTile,
   setPrevMoves,
 } from './chessSlice';
-import {
-  fromStringToObject,
-  transformFromMyAppToChessLibraryRules,
-} from '../../utils/helpers';
-import { doMove, showPrevMove } from './service/chess';
+import { transformObjectToSAN } from '../../utils/helpers';
+import { doMove, showPrevMove, showTileColor } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
-  const chess = new Chess();
   const dispatch = useAppDispatch();
-  const tileColor = chess.squareColor(`${column}${row}` as Square) as TileColor;
+  const tileColor = showTileColor(`${column}${row}`) as TileColor;
   const { selectedTile, possibleMovesForPiece, prevMoves } = useAppSelector(
     state => state.chess
   );
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
-    const result = fromStringToObject(data);
-
+    const result = JSON.parse(data);
     const selectedTile = {
       column: result.column,
       row: result.row,
       piece: { name: result.name, color: result.color },
     };
-    const attacedTile = {
-      column,
-      row,
-      piece,
-    };
+    const attackedTileString = column + row;
+    const attackedTileObject = { column, row };
 
-    const currentMove = transformFromMyAppToChessLibraryRules(column, row);
-
-    if (possibleMovesForPiece.includes(currentMove)) {
-      dispatch(
-        removePieceFromTile({
-          column: selectedTile.column,
-          row: selectedTile.row,
-        })
-      );
-      dispatch(
-        setPieceToTile({
-          column: attacedTile.column,
-          row: attacedTile.row,
-          name: selectedTile.piece.name,
-          color: selectedTile.piece.color,
-        })
-      );
+    if (possibleMovesForPiece.includes(attackedTileString)) {
+      dispatch(movePiece({ selectedTile, attackedTile: attackedTileObject }));
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
 
-      doMove(
-        transformFromMyAppToChessLibraryRules(
-          selectedTile.column,
-          selectedTile.row,
-          selectedTile.piece.name,
-          selectedTile.piece.color
-        ),
-        transformFromMyAppToChessLibraryRules(
-          attacedTile.column,
-          attacedTile.row
-        )
-      );
+      // 1. Зробити крок в chess.js
+      doMove(transformObjectToSAN(selectedTile), attackedTileString);
+      // 2. Отримати інформацію про цей крок з історії кроків з chess.js
       dispatch(setPrevMoves(showPrevMove()));
     }
   }
 
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
+  function handleSelectTile() {
+    if (piece?.name && piece.color) {
+      dispatch(selectTile({ column, row }));
+    }
   }
 
   function handleDragStart(e: React.DragEvent<HTMLDivElement>) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData(
       'text/plain',
-      `color: ${piece?.color}, name: ${piece?.name}, column: ${column}, row: ${row}`
+      JSON.stringify({ color: piece?.color, name: piece?.name, column, row })
     );
 
     setTimeout(() => {
@@ -97,16 +65,10 @@ function Tile({ column, row, piece }: TileProps) {
     (e.target as HTMLDivElement).style.display = 'block';
   }
 
-  function handleSelectTile() {
-    if (piece?.name && piece.color) {
-      dispatch(selectTile({ column, row }));
-    }
-  }
-
   return (
     <Wrapper
       onDrop={handleDrop}
-      onDragOver={handleDragOver}
+      onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
       onClick={handleSelectTile}
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}

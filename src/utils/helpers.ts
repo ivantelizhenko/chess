@@ -75,29 +75,16 @@ export function createBoard() {
   return startedBoard;
 }
 
-export function fromStringToObject(data: string) {
-  const entries = data
-    .split(',')
-    .map(item => item.trim())
-    .map(item => item.split(':').map(part => part.trim()));
-  const result = Object.fromEntries(entries);
+export function transformObjectToSAN(data: {
+  column: BoardType['column'];
+  row: BoardType['row'];
+  piece: { name: PieceFigures; color: PieceColor };
+}) {
+  const { column, row, piece } = data;
+  const pieceName = piece.name === 'p' ? '' : piece.name;
+  const pieceNameWithColor =
+    piece.color === 'w' ? pieceName.toUpperCase() : pieceName;
+  const codeWithPiece = pieceNameWithColor + column + row;
 
-  return result;
-}
-
-export function transformFromMyAppToChessLibraryRules(
-  column: BoardType['column'],
-  row: BoardType['row'],
-  name?: PieceFigures,
-  color?: PieceColor
-) {
-  const code = column + row;
-  if (name && color) {
-    const pieceName = name === 'p' ? '' : name;
-    const pieceNameWithColor =
-      color === 'w' ? pieceName.toUpperCase() : pieceName;
-    const codeWithPiece = pieceNameWithColor + code;
-
-    return codeWithPiece;
-  } else return code;
+  return codeWithPiece;
 }

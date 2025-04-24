@@ -2,8 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
 import {
   BoardType,
+  ColumnType,
   PieceColor,
   PieceFigures,
+  RowType,
   StateType,
 } from './types/ChessTypes';
 
@@ -18,32 +20,35 @@ const chessSlice = createSlice({
   name: 'chess',
   initialState,
   reducers: {
-    setPieceToTile(
+    movePiece(
       state,
       action: PayloadAction<{
-        column: BoardType['column'];
-        row: BoardType['row'];
-        color: PieceColor;
-        name: PieceFigures;
+        selectedTile: {
+          column: ColumnType;
+          row: RowType;
+          piece: {
+            color: PieceColor;
+            name: PieceFigures;
+          };
+        };
+        attackedTile: { column: ColumnType; row: RowType };
       }>
     ) {
+      const { selectedTile, attackedTile } = action.payload;
+
+      // Ставимо фігуру на нову клітинку
       state.board.find(
         tile =>
-          tile.column === action.payload.column &&
-          tile.row === action.payload.row
-      )!.piece = { name: action.payload.name, color: action.payload.color };
-    },
-    removePieceFromTile(
-      state,
-      action: PayloadAction<{
-        column: BoardType['column'];
-        row: BoardType['row'];
-      }>
-    ) {
+          tile.column === attackedTile.column && tile.row === attackedTile.row
+      )!.piece = {
+        name: selectedTile.piece.name,
+        color: selectedTile.piece.color,
+      };
+
+      // Видаляємо фігуру з її минулої клітинки
       state.board.find(
         tile =>
-          tile.column === action.payload.column &&
-          tile.row === action.payload.row
+          tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
     },
     selectTile(
@@ -74,8 +79,7 @@ const chessSlice = createSlice({
 });
 
 export const {
-  setPieceToTile,
-  removePieceFromTile,
+  movePiece,
   selectTile,
   clearSelectedTile,
   setPossibleMovesForPiece,
