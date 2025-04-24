@@ -4,8 +4,10 @@ const chess = new Chess();
 
 export function showPossibleMovesForPiece(column: string, row: string) {
   const code = column + row;
-  const posibleMoves = chess.moves({ square: code as Square });
-
+  const posibleMoves = chess.moves({ square: code as Square }).map(move => {
+    return move.at(-2)! + move.at(-1);
+  });
+  console.log(posibleMoves);
   return posibleMoves;
 }
 
@@ -15,5 +17,5 @@ export function doMove(codeFrom: string, codeTo: string) {
 }
 
 export function showGame() {
-  console.log(chess.ascii());
+  // console.log(chess.ascii());
 }

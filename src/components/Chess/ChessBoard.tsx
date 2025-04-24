@@ -17,7 +17,6 @@ function ChessBoard() {
         selectedTile.column,
         selectedTile.row
       );
-      console.log(possibleMoves);
       dispatch(setPossibleMovesForPiece(possibleMoves));
     }
   }, [selectedTile, dispatch]);

@@ -40,25 +40,10 @@ function Tile({ column, row, piece }: TileProps) {
       piece,
     };
 
-    const currentMove = transformFromMyAppToChessLibraryRules(
-      column,
-      row,
-      selectedTile.piece.name,
-      selectedTile.piece.color
-    );
+    const currentMove = transformFromMyAppToChessLibraryRules(column, row);
+
+    console.log(currentMove);
     if (possibleMovesForPiece.includes(currentMove)) {
-      doMove(
-        transformFromMyAppToChessLibraryRules(
-          selectedTile.column,
-          selectedTile.row,
-          selectedTile.piece.name,
-          selectedTile.piece.color
-        ),
-        transformFromMyAppToChessLibraryRules(
-          attacedTile.column,
-          attacedTile.row
-        )
-      );
       dispatch(
         removePieceFromTile({
           column: selectedTile.column,
@@ -75,6 +60,19 @@ function Tile({ column, row, piece }: TileProps) {
       );
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
+
+      doMove(
+        transformFromMyAppToChessLibraryRules(
+          selectedTile.column,
+          selectedTile.row,
+          selectedTile.piece.name,
+          selectedTile.piece.color
+        ),
+        transformFromMyAppToChessLibraryRules(
+          attacedTile.column,
+          attacedTile.row
+        )
+      );
       showGame();
     }
   }
@@ -113,9 +111,7 @@ function Tile({ column, row, piece }: TileProps) {
       onClick={handleSelectTile}
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
-      $possibleMove={possibleMovesForPiece
-        .map(cords => (cords.length > 2 ? cords.slice(1) : cords))
-        .includes(column + row)}
+      $possibleMove={possibleMovesForPiece.includes(column + row)}
     >
       {piece?.name && (
         <Piece
@@ -150,19 +146,27 @@ const Wrapper = styled.div<{
   ${props =>
     props.$possibleMove &&
     css`
+      --color: ${props.$light === 'light'
+        ? 'var(--color-gray-600)'
+        : 'var(--color-gray-800)'};
       &::after {
         content: '';
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         position: absolute;
-        width: 32%;
         aspect-ratio: 1/1;
         border-radius: 50%;
-        background-color: ${props.$light === 'light'
-          ? 'var(--color-gray-600)'
-          : 'var(--color-gray-800)'};
         opacity: 20%;
+        width: 32%;
+        background-color: var(--color);
+      }
+      &:has([draggable='true']) {
+        &::after {
+          width: 100%;
+          background-color: transparent;
+          border: 10px solid var(--color);
+        }
       }
     `}
 `;
