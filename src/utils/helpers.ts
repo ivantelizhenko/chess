@@ -1,11 +1,7 @@
-import {
-  BoardType,
-  PieceColor,
-  PieceFigures,
-} from '../components/Chess/types/ChessTypes';
+import { TileProps, TileType } from '../components/Chess/types/ChessTypes';
 
 export function createBoard() {
-  const startedBoard: BoardType[] = [
+  const startedBoard: TileProps[] = [
     { row: '8', column: 'a', piece: { name: 'r', color: 'b' } },
     { row: '8', column: 'b', piece: { name: 'n', color: 'b' } },
     { row: '8', column: 'c', piece: { name: 'b', color: 'b' } },
@@ -75,11 +71,7 @@ export function createBoard() {
   return startedBoard;
 }
 
-export function transformObjectToSAN(data: {
-  column: BoardType['column'];
-  row: BoardType['row'];
-  piece: { name: PieceFigures; color: PieceColor };
-}) {
+export function transformObjectToSAN(data: TileType) {
   const { column, row, piece } = data;
   const pieceName = piece.name === 'p' ? '' : piece.name;
   const pieceNameWithColor =

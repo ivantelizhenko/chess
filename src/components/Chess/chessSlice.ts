@@ -1,13 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
-import {
-  BoardType,
-  ColumnType,
-  PieceColor,
-  PieceFigures,
-  RowType,
-  StateType,
-} from './types/ChessTypes';
+import { StateType, TileType, TileWithoutPieceType } from './types/ChessTypes';
 
 const initialState: StateType = {
   board: createBoard(),
@@ -23,15 +16,8 @@ const chessSlice = createSlice({
     movePiece(
       state,
       action: PayloadAction<{
-        selectedTile: {
-          column: ColumnType;
-          row: RowType;
-          piece: {
-            color: PieceColor;
-            name: PieceFigures;
-          };
-        };
-        attackedTile: { column: ColumnType; row: RowType };
+        selectedTile: TileType;
+        attackedTile: TileWithoutPieceType;
       }>
     ) {
       const { selectedTile, attackedTile } = action.payload;
@@ -51,13 +37,7 @@ const chessSlice = createSlice({
           tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
     },
-    selectTile(
-      state,
-      action: PayloadAction<{
-        column: BoardType['column'];
-        row: BoardType['row'];
-      }>
-    ) {
+    selectTile(state, action: PayloadAction<TileWithoutPieceType>) {
       state.selectedTile = {
         column: action.payload.column,
         row: action.payload.row,

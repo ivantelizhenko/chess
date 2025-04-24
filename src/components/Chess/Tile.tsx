@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components';
 import Piece from './Piece';
-import { TileColor, TileProps } from './types/ChessTypes';
+import {
+  TileColor,
+  TileType,
+  TileProps,
+  TileWithoutPieceType,
+} from './types/ChessTypes';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
   clearPossibleMoves,
@@ -19,6 +24,21 @@ function Tile({ column, row, piece }: TileProps) {
     state => state.chess
   );
 
+  function triggerhandleMove(
+    selectedTile: TileType,
+    attackedTileObject: TileWithoutPieceType,
+    attackedTileString: string
+  ) {
+    dispatch(movePiece({ selectedTile, attackedTile: attackedTileObject }));
+    dispatch(clearSelectedTile());
+    dispatch(clearPossibleMoves());
+
+    // 1. Зробити крок в chess.js
+    doMove(transformObjectToSAN(selectedTile), attackedTileString);
+    // 2. Отримати інформацію про цей крок з історії кроків з chess.js
+    dispatch(setPrevMoves(showPrevMove()));
+  }
+
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     const data = e.dataTransfer!.getData('text');
     const result = JSON.parse(data);
@@ -31,14 +51,7 @@ function Tile({ column, row, piece }: TileProps) {
     const attackedTileObject = { column, row };
 
     if (possibleMovesForPiece.includes(attackedTileString)) {
-      dispatch(movePiece({ selectedTile, attackedTile: attackedTileObject }));
-      dispatch(clearSelectedTile());
-      dispatch(clearPossibleMoves());
-
-      // 1. Зробити крок в chess.js
-      doMove(transformObjectToSAN(selectedTile), attackedTileString);
-      // 2. Отримати інформацію про цей крок з історії кроків з chess.js
-      dispatch(setPrevMoves(showPrevMove()));
+      triggerhandleMove(selectedTile, attackedTileObject, attackedTileString);
     }
   }
 

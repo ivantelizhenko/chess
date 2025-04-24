@@ -4,12 +4,6 @@ export type PieceColor = 'w' | 'b';
 export type PieceFigures = 'p' | 'n' | 'r' | 'b' | 'q' | 'k';
 export type TileColor = 'light' | 'dark';
 
-export interface BoardType {
-  row: RowType;
-  column: ColumnType;
-  piece: PieceType | null;
-}
-
 interface PieceType {
   name: PieceFigures;
   color: PieceColor;
@@ -20,6 +14,13 @@ export type TileProps = {
   row: RowType;
   piece: PieceType | null;
 };
+export type TileType = {
+  column: ColumnType;
+  row: RowType;
+  piece: PieceType;
+};
+
+export type TileWithoutPieceType = Omit<TileType, 'piece'>;
 
 export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
   color: PieceColor;
@@ -27,8 +28,8 @@ export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export type StateType = {
-  board: BoardType[];
-  selectedTile: { column: ColumnType; row: BoardType['row'] } | null;
+  board: TileProps[];
+  selectedTile: { column: ColumnType; row: RowType } | null;
   possibleMovesForPiece: string[];
   prevMoves: string[];
 };
