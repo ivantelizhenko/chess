@@ -39,10 +39,11 @@ function Tile({ column, row, piece }: TileProps) {
         move => move.to === attackedTileString
       )?.name;
 
+      console.log(currentMove);
+
       // 3. Зробити крок
       if (currentMove === 'O-O' || currentMove === 'O-O-O') {
         // 3.1 Якщо рокірування
-        console.log('castling');
         dispatch(
           doCastling({
             type: currentMove,

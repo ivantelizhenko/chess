@@ -94,30 +94,6 @@ const chessSlice = createSlice({
         tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
-    doEnPassant(
-      state,
-      action: PayloadAction<{
-        selectedTile: TileType;
-        attackedTile: TileWithoutPieceType;
-      }>
-    ) {
-      const { selectedTile, attackedTile } = action.payload;
-
-      // Ставимо пішак на нову клітинку
-      state.board.find(
-        tile =>
-          tile.column === attackedTile.column && tile.row === attackedTile.row
-      )!.piece = {
-        name: selectedTile.piece.name,
-        color: selectedTile.piece.color,
-      };
-
-      // Видаляємо цього ж пішака з його минулої клітинки
-      state.board.find(
-        tile =>
-          tile.column === selectedTile.column && tile.row === selectedTile.row
-      )!.piece = null;
-    },
     setSelectedTile(state, action: PayloadAction<TileType>) {
       state.selectedTile = action.payload;
     },
