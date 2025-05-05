@@ -18,9 +18,11 @@ export function showPossibleMovesForPiece(column: string, row: string) {
   return result;
 }
 
-export function doMove(codeFrom: string, codeTo: string) {
+export function doMove(codeFrom: string, codeTo: string, promotion?: string) {
   const move = codeFrom + codeTo;
-  chess.move(move);
+  const promotionMove = move + '=' + promotion;
+
+  chess.move(promotion ? promotionMove : move);
 }
 
 export function showPrevMove() {

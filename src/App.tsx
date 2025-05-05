@@ -10,8 +10,10 @@ function App() {
 }
 
 const Wrapper = styled.div`
+  padding: 24px;
+  /* grid-template-rows: auto 1fr auto; */
   display: grid;
-  place-content: center;
+  max-height: 100%;
   height: 100%;
   background-color: var(--color-gray-800);
 `;

@@ -21,5 +21,3 @@ export const WEIGHTS = {
   medium: 600,
   bold: 800,
 };
-
-export const TILE_WIDTH = '100px';

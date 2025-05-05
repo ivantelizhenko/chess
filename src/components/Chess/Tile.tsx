@@ -39,8 +39,6 @@ function Tile({ column, row, piece }: TileProps) {
         move => move.to === attackedTileString
       )?.name;
 
-      console.log(currentMove);
-
       // 3. Зробити крок
       if (currentMove === 'O-O' || currentMove === 'O-O-O') {
         // 3.1 Якщо рокірування
@@ -50,8 +48,18 @@ function Tile({ column, row, piece }: TileProps) {
             color: (selectedTile.piece as PieceType).color,
           })
         );
+      }
+      if (currentMove?.includes('=')) {
+        // 3.2 Якщо перетворення пішака
+        console.log('promotion');
+        dispatch(
+          movePiece({
+            selectedTile,
+            attackedTile,
+          })
+        );
       } else {
-        // 3.2 Якщо не рокірування
+        // 3.3 Всі інші кроки
         dispatch(
           movePiece({
             selectedTile,
@@ -156,10 +164,7 @@ const Wrapper = styled.div<{
 }>`
   --textColor: ${({ $light }) => tileColors[$light].text};
 
-  width: var(--tile-width);
-  aspect-ratio: 1/1;
   position: relative;
-
   background-color: ${props => getBackgroundColor(props)};
 
   ${props =>
