@@ -18,11 +18,10 @@ export function showPossibleMovesForPiece(column: string, row: string) {
   return result;
 }
 
-export function doMove(codeFrom: string, codeTo: string, promotion?: string) {
+export function doMove(codeFrom: string, codeTo: string) {
   const move = codeFrom + codeTo;
-  const promotionMove = move + '=' + promotion;
 
-  chess.move(promotion ? promotionMove : move);
+  chess.move(move);
 }
 
 export function showPrevMove() {
@@ -55,4 +54,14 @@ export function showTileColor(code: string) {
 
 export function showGame() {
   console.log(chess.ascii());
+}
+
+export function getCurretnTurn() {
+  return chess.turn();
+}
+
+export function fixPromotion(from: string, to: string, promotion: string) {
+  const move = from + to + '=' + promotion;
+  chess.undo();
+  chess.move(move);
 }

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Tile from './Tile';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { setPossibleMovesForPiece } from './chessSlice';
 import { showPossibleMovesForPiece } from './service/chess';
 import Promotion from '../Promotion';
@@ -12,7 +12,7 @@ function ChessBoard() {
   const dispatch = useAppDispatch();
   const stateBoard = useAppSelector(state => state.chess.board);
   const selectedTile = useAppSelector(state => state.chess.selectedTile);
-  const [showPromotion, setShowPromotion] = useState<boolean>(true);
+  const { promotion } = useAppSelector(state => state.chess);
 
   useEffect(() => {
     if (selectedTile) {
@@ -31,11 +31,8 @@ function ChessBoard() {
         <Tile key={delegated.column + delegated.row} {...delegated} />
       ))}
 
-      <ModalWindow
-        isOpen={showPromotion}
-        handleCloseModal={() => setShowPromotion(false)}
-      >
-        <Promotion color="w" />
+      <ModalWindow isOpen={promotion.isOpen}>
+        <Promotion />
       </ModalWindow>
     </Wrapper>
   );

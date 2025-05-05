@@ -2,18 +2,22 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
 import {
   PieceColor,
+  PieceFigures,
   PossibleMoveData,
   PrevMoveObject,
   StateType,
   TileType,
   TileWithoutPieceType,
 } from './types/ChessTypes';
+import { fixPromotion, getCurretnTurn } from './service/chess';
 
 const initialState: StateType = {
   board: createBoard(),
   selectedTile: null,
   possibleMovesForPiece: [],
   prevTwoMoves: [],
+  promotion: { isOpen: false, selectedPiece: null },
+  turn: 'w',
 };
 
 const chessSlice = createSlice({
@@ -94,6 +98,43 @@ const chessSlice = createSlice({
         tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
+    openPromotionWindow(state) {
+      state.promotion.isOpen = true;
+    },
+    doPromotion(
+      state,
+      action: PayloadAction<{
+        name: Omit<PieceFigures, 'k' | 'p'>;
+        color: PieceColor;
+      }>
+    ) {
+      const promotedPiece = action.payload;
+      const [columnFrom, rowFrom] = state.prevTwoMoves.at(0)!.from;
+      const [columnTo, rowTo] = state.prevTwoMoves.at(0)!.to;
+
+      // Закрити модальне вікно
+      state.promotion.isOpen = false;
+
+      // Ставимо фігуру на нову клітинку
+      state.board.find(
+        tile => tile.column === columnTo && tile.row === rowTo
+      )!.piece = {
+        name: promotedPiece.name as PieceFigures,
+        color: promotedPiece.color,
+      };
+
+      // Видаляємо фігуру з її минулої клітинки
+      state.board.find(
+        tile => tile.column === columnFrom && tile.row === rowFrom
+      )!.piece = null;
+
+      // Виправляю автоматичний promotion в chess
+      fixPromotion(
+        columnFrom + rowFrom,
+        columnTo + rowTo,
+        promotedPiece.name as string
+      );
+    },
     setSelectedTile(state, action: PayloadAction<TileType>) {
       state.selectedTile = action.payload;
     },
@@ -109,17 +150,23 @@ const chessSlice = createSlice({
     setPrevTwoMoves(state, action: PayloadAction<PrevMoveObject[]>) {
       state.prevTwoMoves = action.payload;
     },
+    setCurrentTurn(state) {
+      state.turn = getCurretnTurn();
+    },
   },
 });
 
 export const {
   movePiece,
   doCastling,
+  openPromotionWindow,
+  doPromotion,
   setSelectedTile,
   clearSelectedTile,
   setPossibleMovesForPiece,
   clearPossibleMoves,
   setPrevTwoMoves,
+  setCurrentTurn,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

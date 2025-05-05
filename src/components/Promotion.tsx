@@ -1,34 +1,64 @@
 import styled from 'styled-components';
 import Piece from './Chess/Piece';
-import { PieceColor, PieceFigures } from './Chess/types/ChessTypes';
+import { PieceFigures } from './Chess/types/ChessTypes';
+import ButtonDefault from './Button';
+import { useAppDispatch, useAppSelector } from '../store';
+import { doPromotion } from './Chess/chessSlice';
 
-function Promotion({ color }: { color: PieceColor }) {
-  const variationsOfPieces = [
-    { name: 'n', id: Math.random() },
-    { name: 'q', id: Math.random() },
-    { name: 'b', id: Math.random() },
-    { name: 'r', id: Math.random() },
-  ];
+const variationsOfPieces = [
+  { name: 'n', id: Math.random() },
+  { name: 'q', id: Math.random() },
+  { name: 'b', id: Math.random() },
+  { name: 'r', id: Math.random() },
+];
+
+function Promotion() {
+  const dispatch = useAppDispatch();
+  const color = useAppSelector(state => state.chess.turn);
+  const prevColor = color === 'w' ? 'b' : 'w';
+
+  function handleSubmit(e: React.MouseEvent<HTMLElement>) {
+    const selectedPiece = e.currentTarget.dataset.name as Omit<
+      PieceFigures,
+      'p' | 'k'
+    >;
+    dispatch(doPromotion({ name: selectedPiece, color: prevColor }));
+  }
 
   return (
     <Wrapper>
       {variationsOfPieces.map(piece => (
-        <Piece
+        <PromotionPieceButton
           key={piece.id}
-          piece={piece.name as PieceFigures}
-          color={color}
-          style={{ width: '15px', height: '15px' }}
-        />
+          onClick={handleSubmit}
+          data-name={piece.name}
+        >
+          <Piece
+            piece={piece.name as PieceFigures}
+            color={prevColor}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </PromotionPieceButton>
       ))}
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  gap: 24px;
+const PromotionPieceButton = styled(ButtonDefault)`
   width: 100%;
   height: 100%;
+
+  &:hover {
+    background-color: var(--color-gray-300);
+  }
+`;
+
+const Wrapper = styled.div`
+  background-color: var(--color-gray-100);
+  place-self: center;
+  display: flex;
+  gap: 24px;
+  width: 30%;
 `;
 
 export default Promotion;

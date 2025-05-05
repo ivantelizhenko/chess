@@ -9,9 +9,11 @@ import {
   setSelectedTile,
   setPrevTwoMoves,
   doCastling,
+  openPromotionWindow,
+  setCurrentTurn,
 } from './chessSlice';
 import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showPrevMove, showTileColor } from './service/chess';
+import { doMove, showGame, showPrevMove, showTileColor } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
@@ -51,13 +53,7 @@ function Tile({ column, row, piece }: TileProps) {
       }
       if (currentMove?.includes('=')) {
         // 3.2 Якщо перетворення пішака
-        console.log('promotion');
-        dispatch(
-          movePiece({
-            selectedTile,
-            attackedTile,
-          })
-        );
+        dispatch(openPromotionWindow());
       } else {
         // 3.3 Всі інші кроки
         dispatch(
@@ -71,6 +67,9 @@ function Tile({ column, row, piece }: TileProps) {
       // 4. Прибрати виділену фігуру та клітинки, на які моде позодити та ж виділена фігура
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
+
+      // 5. Змінити ход
+      dispatch(setCurrentTurn());
     }
   }
 

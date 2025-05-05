@@ -32,6 +32,11 @@ export type StateType = {
   selectedTile: TileType | null;
   possibleMovesForPiece: PossibleMoveData[];
   prevTwoMoves: PrevMoveObject[];
+  promotion: {
+    isOpen: boolean;
+    selectedPiece: Omit<PieceFigures, 'k' | 'p'> | null;
+  };
+  turn: PieceColor;
 };
 
 export type PrevMoveObject = { from: string; to: string };
