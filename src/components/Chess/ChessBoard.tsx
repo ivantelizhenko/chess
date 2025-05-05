@@ -13,7 +13,7 @@ function ChessBoard() {
 
   useEffect(() => {
     if (selectedTile) {
-      const [possibleMoves] = showPossibleMovesForPiece(
+      const possibleMoves = showPossibleMovesForPiece(
         selectedTile.column,
         selectedTile.row
       );

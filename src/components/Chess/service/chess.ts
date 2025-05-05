@@ -6,13 +6,10 @@ export function showPossibleMovesForPiece(column: string, row: string) {
   const code = column + row;
   const possibleMoves = chess.moves({ square: code as Square, verbose: true });
   const result = possibleMoves.map(move => {
-    return move.to;
+    return { to: move.to, name: move.san };
   });
-  const castling = possibleMoves
-    .map(move => move.san)
-    .filter(move => move.includes('0'));
 
-  return [result, castling];
+  return result;
 }
 
 export function doMove(codeFrom: string, codeTo: string) {

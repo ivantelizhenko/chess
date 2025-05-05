@@ -44,14 +44,16 @@ const chessSlice = createSlice({
     },
     doCastling(
       state,
-      action: PayloadAction<{ type: '0-0' | '0-0-0'; color: PieceColor }>
+      action: PayloadAction<{ type: 'O-O' | 'O-O-O'; color: PieceColor }>
     ) {
-      const is00 = action.payload.type === '0-0';
+      console.log('castling 2');
+
+      const isOO = action.payload.type === 'O-O';
       const row = action.payload.color === 'w' ? '1' : '8';
 
       // Перемістити короля
       state.board.find(
-        tile => tile.column === (is00 ? 'g' : 'e') && tile.row === row
+        tile => tile.column === (isOO ? 'g' : 'c') && tile.row === row
       )!.piece = {
         name: 'k',
         color: action.payload.color,
@@ -62,14 +64,14 @@ const chessSlice = createSlice({
 
       // Перемістити туру
       state.board.find(
-        tile => tile.column === (is00 ? 'f' : 'd') && tile.row === row
+        tile => tile.column === (isOO ? 'f' : 'd') && tile.row === row
       )!.piece = {
         name: 'r',
         color: action.payload.color,
       };
 
       state.board.find(
-        tile => tile.column === (is00 ? 'h' : 'a') && tile.row === row
+        tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
     setSelectedTile(state, action: PayloadAction<TileType>) {
@@ -78,7 +80,10 @@ const chessSlice = createSlice({
     clearSelectedTile(state) {
       state.selectedTile = null;
     },
-    setPossibleMovesForPiece(state, action: PayloadAction<string[]>) {
+    setPossibleMovesForPiece(
+      state,
+      action: PayloadAction<{ to: string; name: string }[]>
+    ) {
       state.possibleMovesForPiece = action.payload;
     },
     clearPossibleMoves(state) {

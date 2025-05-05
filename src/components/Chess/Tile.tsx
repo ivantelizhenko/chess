@@ -11,7 +11,7 @@ import {
   doCastling,
 } from './chessSlice';
 import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showGame, showPrevMove, showTileColor } from './service/chess';
+import { doMove, showPrevMove, showTileColor } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
@@ -19,30 +19,49 @@ function Tile({ column, row, piece }: TileProps) {
   const { selectedTile, possibleMovesForPiece, prevMoves } = useAppSelector(
     state => state.chess
   );
-  const isPossibleMove = possibleMovesForPiece.includes(column + row);
+  const isPossibleMove = possibleMovesForPiece
+    .map(move => move.to)
+    .includes(column + row);
 
   function handleMove() {
     const attackedTileString = column + row;
     const attackedTile = { column, row };
+
     if (selectedTile && isPossibleMove) {
       // 1. Зробити крок в chess.js
       doMove(transformObjectToSAN(selectedTile), attackedTileString);
+
       // 2. Отримати інформацію про цей крок з історії кроків з chess.js
       dispatch(setPrevMoves(showPrevMove()));
-      console.log(showPrevMove());
-      dispatch(
-        movePiece({
-          selectedTile,
-          attackedTile,
-        })
-      );
 
-      // dispatch(doCastling({ type: '0-0', color: (piece as PieceType).color }));
+      // 2.1 Ідентифікація назви кроку
+      const currentMove = possibleMovesForPiece.find(
+        move => move.to === attackedTileString
+      )?.name;
 
+      // 3. Зробити крок
+      if (currentMove === 'O-O' || currentMove === 'O-O-O') {
+        // 3.1 Якщо рокірування
+        console.log('castling');
+        dispatch(
+          doCastling({
+            type: currentMove,
+            color: (selectedTile.piece as PieceType).color,
+          })
+        );
+      } else {
+        // 3.2 Якщо не рокірування
+        dispatch(
+          movePiece({
+            selectedTile,
+            attackedTile,
+          })
+        );
+      }
+
+      // 4. Прибрати виділену фігуру та клітинки, на які моде позодити та ж виділена фігура
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
-
-      showGame();
     }
   }
 
