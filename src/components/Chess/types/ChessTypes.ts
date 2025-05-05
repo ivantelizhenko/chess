@@ -30,6 +30,15 @@ export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
 export type StateType = {
   board: TileProps[];
   selectedTile: TileType | null;
-  possibleMovesForPiece: { to: string; name: string }[];
-  prevMoves: string[];
+  possibleMovesForPiece: PossibleMoveData[];
+  prevTwoMoves: PrevMoveObject[];
+};
+
+export type PrevMoveObject = { from: string; to: string };
+
+export type PossibleMoveData = {
+  from: string;
+  to: string;
+  name: string;
+  attackedPiece: PieceFigures | null;
 };

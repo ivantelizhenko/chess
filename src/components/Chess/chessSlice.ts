@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../../utils/helpers';
 import {
   PieceColor,
+  PossibleMoveData,
+  PrevMoveObject,
   StateType,
   TileType,
   TileWithoutPieceType,
@@ -11,7 +13,7 @@ const initialState: StateType = {
   board: createBoard(),
   selectedTile: null,
   possibleMovesForPiece: [],
-  prevMoves: [],
+  prevTwoMoves: [],
 };
 
 const chessSlice = createSlice({
@@ -41,6 +43,24 @@ const chessSlice = createSlice({
         tile =>
           tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
+
+      // En passant
+      const prevMove = state.prevTwoMoves.at(1)!;
+      const isWhiteEnPassant =
+        selectedTile.piece.color === 'w' && selectedTile.row === '5';
+      const isBlackEnPassant =
+        selectedTile.piece.color === 'b' && selectedTile.row === '4';
+      const isPawnFirstTwoTileMove = +prevMove?.to[1] - +prevMove?.from[1];
+
+      if (
+        (isWhiteEnPassant && isPawnFirstTwoTileMove === -2) ||
+        (isBlackEnPassant && isPawnFirstTwoTileMove === 2)
+      ) {
+        const [column, row] = prevMove.to.split('');
+        state.board.find(
+          tile => tile.column === column && tile.row === row
+        )!.piece = null;
+      }
     },
     doCastling(
       state,
@@ -74,23 +94,44 @@ const chessSlice = createSlice({
         tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
+    doEnPassant(
+      state,
+      action: PayloadAction<{
+        selectedTile: TileType;
+        attackedTile: TileWithoutPieceType;
+      }>
+    ) {
+      const { selectedTile, attackedTile } = action.payload;
+
+      // Ставимо пішак на нову клітинку
+      state.board.find(
+        tile =>
+          tile.column === attackedTile.column && tile.row === attackedTile.row
+      )!.piece = {
+        name: selectedTile.piece.name,
+        color: selectedTile.piece.color,
+      };
+
+      // Видаляємо цього ж пішака з його минулої клітинки
+      state.board.find(
+        tile =>
+          tile.column === selectedTile.column && tile.row === selectedTile.row
+      )!.piece = null;
+    },
     setSelectedTile(state, action: PayloadAction<TileType>) {
       state.selectedTile = action.payload;
     },
     clearSelectedTile(state) {
       state.selectedTile = null;
     },
-    setPossibleMovesForPiece(
-      state,
-      action: PayloadAction<{ to: string; name: string }[]>
-    ) {
+    setPossibleMovesForPiece(state, action: PayloadAction<PossibleMoveData[]>) {
       state.possibleMovesForPiece = action.payload;
     },
     clearPossibleMoves(state) {
       state.possibleMovesForPiece = [];
     },
-    setPrevMoves(state, action: PayloadAction<string[]>) {
-      state.prevMoves = action.payload;
+    setPrevTwoMoves(state, action: PayloadAction<PrevMoveObject[]>) {
+      state.prevTwoMoves = action.payload;
     },
   },
 });
@@ -102,7 +143,7 @@ export const {
   clearSelectedTile,
   setPossibleMovesForPiece,
   clearPossibleMoves,
-  setPrevMoves,
+  setPrevTwoMoves,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

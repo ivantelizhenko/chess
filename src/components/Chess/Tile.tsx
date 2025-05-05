@@ -7,7 +7,7 @@ import {
   clearSelectedTile,
   movePiece,
   setSelectedTile,
-  setPrevMoves,
+  setPrevTwoMoves,
   doCastling,
 } from './chessSlice';
 import { transformObjectToSAN } from '../../utils/helpers';
@@ -16,23 +16,23 @@ import { doMove, showPrevMove, showTileColor } from './service/chess';
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
   const tileColor = showTileColor(`${column}${row}`) as TileColor;
-  const { selectedTile, possibleMovesForPiece, prevMoves } = useAppSelector(
+  const { selectedTile, possibleMovesForPiece, prevTwoMoves } = useAppSelector(
     state => state.chess
   );
+
+  const attackedTile = { column, row };
+  const attackedTileString = column + row;
   const isPossibleMove = possibleMovesForPiece
     .map(move => move.to)
-    .includes(column + row);
+    .includes(attackedTileString);
 
   function handleMove() {
-    const attackedTileString = column + row;
-    const attackedTile = { column, row };
-
     if (selectedTile && isPossibleMove) {
       // 1. Зробити крок в chess.js
       doMove(transformObjectToSAN(selectedTile), attackedTileString);
 
       // 2. Отримати інформацію про цей крок з історії кроків з chess.js
-      dispatch(setPrevMoves(showPrevMove()));
+      dispatch(setPrevTwoMoves(showPrevMove()));
 
       // 2.1 Ідентифікація назви кроку
       const currentMove = possibleMovesForPiece.find(
@@ -98,7 +98,10 @@ function Tile({ column, row, piece }: TileProps) {
       onClick={handleClick}
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
-      $isPrevMove={prevMoves.includes(column + row)}
+      $isPrevMove={
+        prevTwoMoves.at(0)?.from === column + row ||
+        prevTwoMoves.at(0)?.to === column + row
+      }
       $possibleMove={isPossibleMove}
     >
       {piece?.name && (
