@@ -166,6 +166,7 @@ body {
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: auto;
+  font-family: -apple-system, system-ui, Helvetica, Arial, sans-serif;
 }
 
 img,

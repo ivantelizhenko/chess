@@ -113,9 +113,39 @@ function Tile({ column, row, piece }: TileProps) {
           onDragEnd={handleDragEnd}
         />
       )}
+      {column === 'a' && <CordNumber>{row}</CordNumber>}
+      {row === '1' && <CordLetter>{column}</CordLetter>}
     </Wrapper>
   );
 }
+
+const tileColors = {
+  light: {
+    default: 'var(--color-tile-light)',
+    selected: 'var(--color-tile-light-selected)',
+    possibleMove: 'var(--color-gray-600)',
+    text: 'var(--color-tile-dark)',
+  },
+  dark: {
+    default: 'var(--color-tile-dark)',
+    selected: 'var(--color-tile-dark-selected)',
+    possibleMove: 'var(--color-gray-800)',
+    text: 'var(--color-tile-light)',
+  },
+};
+
+const getBackgroundColor = ({
+  $light,
+  $isSelected,
+  $isPrevMove,
+}: {
+  $light: TileColor;
+  $isSelected: boolean;
+  $isPrevMove: boolean;
+}) => {
+  const theme = tileColors[$light];
+  return $isSelected || $isPrevMove ? theme.selected : theme.default;
+};
 
 const Wrapper = styled.div<{
   $light: TileColor;
@@ -123,24 +153,19 @@ const Wrapper = styled.div<{
   $possibleMove: boolean;
   $isPrevMove: boolean;
 }>`
+  --textColor: ${({ $light }) => tileColors[$light].text};
+
   width: var(--tile-width);
   aspect-ratio: 1/1;
   position: relative;
-  background-color: ${props =>
-    props.$light === 'light'
-      ? props.$isSelected || props.$isPrevMove
-        ? 'var(--color-tile-light-selected)'
-        : 'var(--color-tile-light)'
-      : props.$isSelected || props.$isPrevMove
-      ? 'var(--color-tile-dark-selected)'
-      : 'var(--color-tile-dark)'};
+
+  background-color: ${props => getBackgroundColor(props)};
 
   ${props =>
     props.$possibleMove &&
     css`
-      --color: ${props.$light === 'light'
-        ? 'var(--color-gray-600)'
-        : 'var(--color-gray-800)'};
+      --color: ${tileColors[props.$light].possibleMove};
+
       &::after {
         content: '';
         top: 50%;
@@ -153,6 +178,7 @@ const Wrapper = styled.div<{
         width: 32%;
         background-color: var(--color);
       }
+
       &:has([draggable='true']) {
         &::after {
           width: 100%;
@@ -161,6 +187,24 @@ const Wrapper = styled.div<{
         }
       }
     `}
+`;
+
+const Cord = styled.span`
+  position: absolute;
+  color: var(--textColor);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  filter: drop-shadow(0 2px 8px hsl(0 0 0 / 0.4));
+`;
+
+const CordLetter = styled(Cord)`
+  bottom: 1px;
+  right: 1px;
+`;
+const CordNumber = styled(Cord)`
+  top: 1px;
+  left: 1px;
 `;
 
 export default Tile;
