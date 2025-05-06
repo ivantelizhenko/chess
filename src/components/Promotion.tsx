@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Piece from './Chess/Piece';
 import { PieceFigures } from './Chess/types/ChessTypes';
-import ButtonDefault from './Button';
+import ButtonDefault from './DefaultButton';
 import { useAppDispatch, useAppSelector } from '../store';
 import { doPromotion } from './Chess/chessSlice';
 
