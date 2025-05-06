@@ -13,7 +13,7 @@ import {
   setCurrentTurn,
 } from './chessSlice';
 import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showGame, showPrevMove, showTileColor } from './service/chess';
+import { doMove, showPrevMove, showTileColor } from './service/chess';
 
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
@@ -50,8 +50,7 @@ function Tile({ column, row, piece }: TileProps) {
             color: (selectedTile.piece as PieceType).color,
           })
         );
-      }
-      if (currentMove?.includes('=')) {
+      } else if (currentMove?.includes('=')) {
         // 3.2 Якщо перетворення пішака
         dispatch(openPromotionWindow());
       } else {
@@ -64,11 +63,11 @@ function Tile({ column, row, piece }: TileProps) {
         );
       }
 
-      // 4. Прибрати виділену фігуру та клітинки, на які моде позодити та ж виділена фігура
+      // 4. Прибрати виділену фігуру та клітинки, на які може походити та ж виділена фігура
       dispatch(clearSelectedTile());
       dispatch(clearPossibleMoves());
 
-      // 5. Змінити ход
+      // 5. Всновити чий крок(Чорних чи Білих)
       dispatch(setCurrentTurn());
     }
   }
@@ -121,8 +120,6 @@ function Tile({ column, row, piece }: TileProps) {
           onDragEnd={handleDragEnd}
         />
       )}
-      {column === 'a' && <CordNumber>{row}</CordNumber>}
-      {row === '1' && <CordLetter>{column}</CordLetter>}
     </Wrapper>
   );
 }
@@ -192,24 +189,6 @@ const Wrapper = styled.div<{
         }
       }
     `}
-`;
-
-const Cord = styled.span`
-  position: absolute;
-  color: var(--textColor);
-  font-size: 1.25rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  filter: drop-shadow(0 2px 8px hsl(0 0 0 / 0.4));
-`;
-
-const CordLetter = styled(Cord)`
-  bottom: 1px;
-  right: 1px;
-`;
-const CordNumber = styled(Cord)`
-  top: 1px;
-  left: 1px;
 `;
 
 export default Tile;
