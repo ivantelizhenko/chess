@@ -1,21 +1,19 @@
-import ChessBoard from './components/Chess/ChessBoard';
 import styled from 'styled-components';
+import ChessEnviroment from './components/Chess/ChessEnviroment';
 
 function App() {
   return (
     <Wrapper>
-      <ChessBoard />
+      <ChessEnviroment />
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
-  padding: 24px;
-  /* grid-template-rows: auto 1fr auto; */
   display: grid;
-  max-height: 100%;
   height: 100%;
-  background-color: var(--color-gray-800);
+  max-height: 100%;
+  background-color: var(--color-gray-700);
 `;
 
 export default App;

@@ -72,10 +72,6 @@ function Tile({ column, row, piece }: TileProps) {
     }
   }
 
-  function handleDrop() {
-    handleMove();
-  }
-
   function handleSetSelectedTile() {
     if (piece?.name && piece.color) {
       dispatch(setSelectedTile({ column, row, piece }));
@@ -100,7 +96,7 @@ function Tile({ column, row, piece }: TileProps) {
 
   return (
     <Wrapper
-      onDrop={handleDrop}
+      onDrop={handleMove}
       onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
       onClick={handleClick}
       $light={tileColor}
@@ -158,6 +154,9 @@ const Wrapper = styled.div<{
   $possibleMove: boolean;
   $isPrevMove: boolean;
 }>`
+  width: 100%;
+  height: 100%;
+
   --textColor: ${({ $light }) => tileColors[$light].text};
 
   position: relative;

@@ -144,6 +144,7 @@ html {
   --color-gray-600: ${COLORS.gray[600]};
   --color-gray-700: ${COLORS.gray[700]};
   --color-gray-800: ${COLORS.gray[800]};
+  --color-gray-900: ${COLORS.gray[900]};
   --color-primary: ${COLORS.primary};
   --color-primary-dark: ${COLORS.primaryDark};
   --color-tile-light: ${COLORS.lightTile};

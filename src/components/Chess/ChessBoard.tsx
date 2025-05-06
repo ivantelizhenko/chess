@@ -39,12 +39,12 @@ function ChessBoard() {
 }
 
 const Wrapper = styled.div`
-  place-self: center;
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 0;
+  grid-area: board;
 
   aspect-ratio: 1/1;
-  max-height: 100%;
-  height: 100%;
-
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
