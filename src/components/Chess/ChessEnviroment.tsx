@@ -3,13 +3,20 @@ import ChessBoard from './ChessBoard';
 
 import Buttons from './Buttons';
 import Time from './Time';
+import { useAppSelector } from '../../store/store';
+import { convertTime } from '../../utils/helpers';
 
 function ChessEnviroment() {
+  const { white, black } = useAppSelector(state => state.chess.time);
+
+  const blackTime = convertTime(black);
+  const whiteTime = convertTime(white);
+
   return (
     <Wrapper>
-      <Time type="b">10:00</Time>
+      <Time type="b">{blackTime}</Time>
       <ChessBoard />
-      <Time type="w">10:00</Time>
+      <Time type="w">{whiteTime}</Time>
       <Buttons />
     </Wrapper>
   );

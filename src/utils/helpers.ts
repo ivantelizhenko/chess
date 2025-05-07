@@ -80,3 +80,15 @@ export function transformObjectToSAN(data: TileType) {
 
   return codeWithPiece;
 }
+
+export function convertTime(seconds: number) {
+  if (seconds < 0) return '00:00';
+
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+
+  const mStr = String(minutes).padStart(2, '0');
+  const sStr = String(secs).padStart(2, '0');
+
+  return `${mStr}:${sStr}`;
+}

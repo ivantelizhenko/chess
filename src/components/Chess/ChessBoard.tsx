@@ -6,19 +6,34 @@ import { useEffect } from 'react';
 import {
   clearPossibleMoves,
   clearSelectedTile,
+  runTime,
   setCurrentTurn,
+  setGameOver,
   setPossibleMovesForPiece,
 } from '../../store/chessSlice';
-import { isGameOver, showPossibleMovesForPiece } from '../../service/chess';
+import {
+  isGameOver as isGameOverchess,
+  showPossibleMovesForPiece,
+} from '../../service/chess';
 import Promotion from '../Promotion';
 import ModalWindow from '../ModalWindow';
 
+import useInterval from '../hooks/useInterval';
+
 function ChessBoard() {
   const dispatch = useAppDispatch();
-  const stateBoard = useAppSelector(state => state.chess.board);
-  const selectedTile = useAppSelector(state => state.chess.selectedTile);
-  const { promotion } = useAppSelector(state => state.chess);
+  const {
+    promotion,
+    selectedTile,
+    board: stateBoard,
+    time,
+    isGameOver,
+  } = useAppSelector(state => state.chess);
 
+  // Таймер гравців
+  useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
+
+  // Вибирати елемент
   useEffect(() => {
     if (selectedTile) {
       const possibleMoves = showPossibleMovesForPiece(
@@ -30,6 +45,7 @@ function ChessBoard() {
     }
   }, [selectedTile, dispatch]);
 
+  // Очистити вибрану клітинку та можливі кроки, зміна кроку та завершення гри
   useEffect(() => {
     // Прибрати виділену фігуру та клітинки, на які може походити та ж виділена фігура
     dispatch(clearSelectedTile());
@@ -39,10 +55,21 @@ function ChessBoard() {
     dispatch(setCurrentTurn());
 
     // Перевірка, чи не завершилася гра
-    if (isGameOver()) {
-      console.log('game over');
+    if (isGameOverchess()) {
+      const gameOverMessage = isGameOverchess();
+      dispatch(setGameOver(gameOverMessage!));
     }
   }, [stateBoard, dispatch]);
+
+  // Слідкування за часом
+  useEffect(() => {
+    if (time.white === 0) {
+      dispatch(setGameOver('White time is over.'));
+    }
+    if (time.black === 0) {
+      dispatch(setGameOver('Black time is over.'));
+    }
+  }, [time.white, time.black, dispatch]);
 
   return (
     <Wrapper>

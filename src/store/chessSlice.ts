@@ -18,6 +18,8 @@ const initialState: StateType = {
   prevTwoMoves: [],
   promotion: { isOpen: false, selectedPiece: null },
   turn: 'w',
+  time: { white: 600, black: 600 },
+  isGameOver: { is: false, message: '' },
 };
 
 const chessSlice = createSlice({
@@ -153,6 +155,14 @@ const chessSlice = createSlice({
     setCurrentTurn(state) {
       state.turn = getCurretnTurn();
     },
+    runTime(state) {
+      if (state.turn === 'w') {
+        state.time.white -= 1;
+      } else state.time.black -= 1;
+    },
+    setGameOver(state, action: PayloadAction<string>) {
+      state.isGameOver = { is: true, message: action.payload };
+    },
   },
 });
 
@@ -167,6 +177,8 @@ export const {
   clearPossibleMoves,
   setPrevTwoMoves,
   setCurrentTurn,
+  runTime,
+  setGameOver,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

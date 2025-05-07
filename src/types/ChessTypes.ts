@@ -37,6 +37,8 @@ export type StateType = {
     selectedPiece: Omit<PieceFigures, 'k' | 'p'> | null;
   };
   turn: PieceColor;
+  time: { white: number; black: number };
+  isGameOver: { is: boolean; message: string };
 };
 
 export type PrevMoveObject = { from: string; to: string; piece: PieceFigures };
