@@ -1,21 +1,24 @@
 import styled from 'styled-components';
 import DefaultButton from '../DefaultButton';
 import { useAppDispatch } from '../../store/store';
-import { openSurrenderWindow } from '../../store/chessSlice';
+import { openModalWindow } from '../../store/chessSlice';
 
 function Buttons() {
   const dispatch = useAppDispatch();
 
   function handleOpenSurrenderWindow() {
-    dispatch(openSurrenderWindow());
+    dispatch(openModalWindow('surrender'));
+  }
+  function handleOpenOfferDrawSendWindow() {
+    dispatch(openModalWindow('offerDrawSend'));
   }
 
   return (
     <Wrapper>
-      <ChessButton onClick={handleOpenSurrenderWindow}>
+      <ChessButton onClick={handleOpenOfferDrawSendWindow}>
         <span>Draw</span>
       </ChessButton>
-      <ChessButton>
+      <ChessButton onClick={handleOpenSurrenderWindow}>
         <span>Surrender</span>
       </ChessButton>
     </Wrapper>

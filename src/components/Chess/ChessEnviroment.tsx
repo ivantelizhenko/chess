@@ -5,11 +5,7 @@ import Buttons from './Buttons';
 import Time from './Time';
 import useInterval from '../hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import {
-  closeSurrenderWindow,
-  runTime,
-  setGameOver,
-} from '../../store/chessSlice';
+import { closeModalWindow, runTime, setGameOver } from '../../store/chessSlice';
 import { useEffect } from 'react';
 import { SideColor } from '../../types/ChessTypes';
 import ModalWindow from '../ModalWindow';
@@ -17,7 +13,7 @@ import Question from '../Question';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-  const { isGameOver, time, side, surrenderWindowIsOpen } = useAppSelector(
+  const { isGameOver, time, side, isOpenModalWindow } = useAppSelector(
     state => state.chess
   );
 
@@ -36,13 +32,15 @@ function ChessEnviroment() {
 
   function handleSubmitSurrender() {
     const sideWord = side === 'w' ? 'White' : 'Black';
-    dispatch(setGameOver(`${sideWord} surender`));
-    dispatch(closeSurrenderWindow());
+    dispatch(setGameOver(`${sideWord} surrender`));
+    dispatch(closeModalWindow());
   }
 
-  function handleDeclineSurrender() {
-    dispatch(closeSurrenderWindow());
+  function handleCloseModal() {
+    dispatch(closeModalWindow());
   }
+
+  function handleSubmitOfferDrawSend() {}
 
   return (
     <Wrapper $side={side}>
@@ -50,12 +48,14 @@ function ChessEnviroment() {
       <ChessBoard />
       <Time type="w" />
       <Buttons />
-      <ModalWindow isOpen={surrenderWindowIsOpen}>
-        <Question
-          onSubmit={handleSubmitSurrender}
-          onReject={handleDeclineSurrender}
-        >
+      <ModalWindow isOpen={isOpenModalWindow === 'surrender'}>
+        <Question onSubmit={handleSubmitSurrender} onReject={handleCloseModal}>
           Are you sure you want to surrender?
+        </Question>
+      </ModalWindow>
+      <ModalWindow isOpen={isOpenModalWindow === 'offerDrawSend'}>
+        <Question onSubmit={handleSubmitSurrender} onReject={handleCloseModal}>
+          Are you sure you want to offer the draw?
         </Question>
       </ModalWindow>
     </Wrapper>

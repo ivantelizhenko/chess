@@ -8,6 +8,7 @@ import {
   StateType,
   TileType,
   TileWithoutPieceType,
+  ModalWindowType,
 } from '../types/ChessTypes';
 import { fixWrongPromotion, getCurretnTurn } from '../service/chess';
 
@@ -16,12 +17,12 @@ const initialState: StateType = {
   selectedTile: null,
   possibleMovesForPiece: [],
   prevTwoMoves: [],
-  promotion: { isOpen: false, selectedPiece: null },
+  promotionPiece: null,
   turn: 'w',
   time: { white: 600, black: 600 },
   isGameOver: { is: false, message: '' },
   side: 'w',
-  surrenderWindowIsOpen: false,
+  isOpenModalWindow: null,
 };
 
 const chessSlice = createSlice({
@@ -102,9 +103,6 @@ const chessSlice = createSlice({
         tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
-    openPromotionWindow(state) {
-      state.promotion.isOpen = true;
-    },
     doPromotion(
       state,
       action: PayloadAction<{
@@ -117,7 +115,7 @@ const chessSlice = createSlice({
       const [columnTo, rowTo] = state.prevTwoMoves.at(0)!.to;
 
       // Закрити модальне вікно
-      state.promotion.isOpen = false;
+      state.isOpenModalWindow = null;
 
       // Ставимо фігуру на нову клітинку
       state.board.find(
@@ -172,11 +170,14 @@ const chessSlice = createSlice({
       const side = state.side === 'w' ? 'White' : 'Black';
       state.isGameOver = { is: true, message: `${side} surrender` };
     },
-    openSurrenderWindow(state) {
-      state.surrenderWindowIsOpen = true;
+    openModalWindow(
+      state,
+      action: PayloadAction<Omit<ModalWindowType, 'null'>>
+    ) {
+      state.isOpenModalWindow = action.payload as ModalWindowType;
     },
-    closeSurrenderWindow(state) {
-      state.surrenderWindowIsOpen = false;
+    closeModalWindow(state) {
+      state.isOpenModalWindow = null;
     },
   },
 });
@@ -184,7 +185,6 @@ const chessSlice = createSlice({
 export const {
   movePiece,
   doCastling,
-  openPromotionWindow,
   doPromotion,
   setSelectedTile,
   clearSelectedTile,
@@ -194,8 +194,8 @@ export const {
   setCurrentTurn,
   runTime,
   setGameOver,
-  openSurrenderWindow,
-  closeSurrenderWindow,
+  openModalWindow,
+  closeModalWindow,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

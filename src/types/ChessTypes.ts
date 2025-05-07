@@ -4,6 +4,27 @@ export type SideColor = 'w' | 'b';
 export type PieceFigures = 'p' | 'n' | 'r' | 'b' | 'q' | 'k';
 export type TileColor = 'light' | 'dark';
 
+export type StateType = {
+  board: TileProps[];
+  selectedTile: TileType | null;
+  possibleMovesForPiece: PossibleMoveData[];
+  prevTwoMoves: PrevMoveObject[];
+  promotionPiece: Omit<PieceFigures, 'k' | 'p'> | null;
+  turn: SideColor;
+  time: { white: number; black: number };
+  isGameOver: { is: boolean; message: string };
+  side: SideColor;
+  isOpenModalWindow: ModalWindowType;
+};
+
+export type ModalWindowType =
+  | 'promotion'
+  | 'gameOver'
+  | 'surrender'
+  | 'offerDrawSend'
+  | 'offerDrawGet'
+  | null;
+
 export interface PieceType {
   name: PieceFigures;
   color: SideColor;
@@ -14,6 +35,7 @@ export type TileProps = {
   row: RowType;
   piece: PieceType | null;
 };
+
 export type TileType = {
   column: ColumnType;
   row: RowType;
@@ -26,22 +48,6 @@ export interface PieceProps extends React.HTMLAttributes<HTMLDivElement> {
   color: SideColor;
   piece: PieceFigures;
 }
-
-export type StateType = {
-  board: TileProps[];
-  selectedTile: TileType | null;
-  possibleMovesForPiece: PossibleMoveData[];
-  prevTwoMoves: PrevMoveObject[];
-  promotion: {
-    isOpen: boolean;
-    selectedPiece: Omit<PieceFigures, 'k' | 'p'> | null;
-  };
-  turn: SideColor;
-  time: { white: number; black: number };
-  isGameOver: { is: boolean; message: string };
-  side: SideColor;
-  surrenderWindowIsOpen: boolean;
-};
 
 export type PrevMoveObject = { from: string; to: string; piece: PieceFigures };
 

@@ -20,10 +20,10 @@ import ModalWindow from '../ModalWindow';
 function ChessBoard() {
   const dispatch = useAppDispatch();
   const {
-    promotion,
     selectedTile,
     board: stateBoard,
     side,
+    isOpenModalWindow,
   } = useAppSelector(state => state.chess);
 
   // Вибирати елемент
@@ -60,7 +60,7 @@ function ChessBoard() {
         <Tile key={delegated.column + delegated.row} {...delegated} />
       ))}
 
-      <ModalWindow isOpen={promotion.isOpen}>
+      <ModalWindow isOpen={isOpenModalWindow === 'promotion'}>
         <Promotion />
       </ModalWindow>
     </Wrapper>

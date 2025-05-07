@@ -10,7 +10,7 @@ import {
   setSelectedTile,
   setPrevTwoMoves,
   doCastling,
-  openPromotionWindow,
+  openModalWindow,
 } from '../../store/chessSlice';
 import Piece from './Piece';
 
@@ -49,7 +49,7 @@ function Tile({ column, row, piece }: TileProps) {
       }
       if (moveType === 'promotion') {
         // 3.2 Якщо перетворення пішака
-        dispatch(openPromotionWindow());
+        dispatch(openModalWindow('promotion'));
       }
       if (moveType === 'normal') {
         // 3.3 Всі інші кроки
