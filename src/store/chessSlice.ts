@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createBoard } from '../../utils/helpers';
+import { createBoard } from '../utils/helpers';
 import {
   PieceColor,
   PieceFigures,
@@ -8,8 +8,8 @@ import {
   StateType,
   TileType,
   TileWithoutPieceType,
-} from './types/ChessTypes';
-import { fixPromotion, getCurretnTurn } from './service/chess';
+} from '../types/ChessTypes';
+import { fixWrongPromotion, getCurretnTurn } from '../service/chess';
 
 const initialState: StateType = {
   board: createBoard(),
@@ -56,22 +56,22 @@ const chessSlice = createSlice({
         selectedTile.piece.color === 'b' && selectedTile.row === '4';
       const isPawnFirstTwoTileMove = +prevMove?.to[1] - +prevMove?.from[1];
 
-      if (
-        (isWhiteEnPassant && isPawnFirstTwoTileMove === -2) ||
-        (isBlackEnPassant && isPawnFirstTwoTileMove === 2)
-      ) {
-        const [column, row] = prevMove.to.split('');
-        state.board.find(
-          tile => tile.column === column && tile.row === row
-        )!.piece = null;
+      if (prevMove?.piece === 'p') {
+        if (
+          (isWhiteEnPassant && isPawnFirstTwoTileMove === -2) ||
+          (isBlackEnPassant && isPawnFirstTwoTileMove === 2)
+        ) {
+          const [column, row] = prevMove.to.split('');
+          state.board.find(
+            tile => tile.column === column && tile.row === row
+          )!.piece = null;
+        }
       }
     },
     doCastling(
       state,
       action: PayloadAction<{ type: 'O-O' | 'O-O-O'; color: PieceColor }>
     ) {
-      console.log('castling 2');
-
       const isOO = action.payload.type === 'O-O';
       const row = action.payload.color === 'w' ? '1' : '8';
 
@@ -128,8 +128,8 @@ const chessSlice = createSlice({
         tile => tile.column === columnFrom && tile.row === rowFrom
       )!.piece = null;
 
-      // Виправляю автоматичний promotion в chess
-      fixPromotion(
+      // Виправляю в chess автоматичний promotion на вибраний
+      fixWrongPromotion(
         columnFrom + rowFrom,
         columnTo + rowTo,
         promotedPiece.name as string

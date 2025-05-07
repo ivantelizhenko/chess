@@ -39,7 +39,7 @@ export type StateType = {
   turn: PieceColor;
 };
 
-export type PrevMoveObject = { from: string; to: string };
+export type PrevMoveObject = { from: string; to: string; piece: PieceFigures };
 
 export type PossibleMoveData = {
   from: string;

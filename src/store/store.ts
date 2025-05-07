@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import chessReducer from './components/Chess/chessSlice';
+import chessReducer from './chessSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const store = configureStore({

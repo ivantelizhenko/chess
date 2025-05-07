@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Piece from './Chess/Piece';
-import { PieceFigures } from './Chess/types/ChessTypes';
+import { PieceFigures } from '../types/ChessTypes';
 import ButtonDefault from './DefaultButton';
-import { useAppDispatch, useAppSelector } from '../store';
-import { doPromotion } from './Chess/chessSlice';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { doPromotion } from '../store/chessSlice';
 
 const variationsOfPieces = [
   { name: 'n', id: Math.random() },

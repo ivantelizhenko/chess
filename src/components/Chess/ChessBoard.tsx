@@ -1,10 +1,15 @@
 import styled from 'styled-components';
 
 import Tile from './Tile';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { useEffect } from 'react';
-import { setPossibleMovesForPiece } from './chessSlice';
-import { showPossibleMovesForPiece } from './service/chess';
+import {
+  clearPossibleMoves,
+  clearSelectedTile,
+  setCurrentTurn,
+  setPossibleMovesForPiece,
+} from '../../store/chessSlice';
+import { isGameOver, showPossibleMovesForPiece } from '../../service/chess';
 import Promotion from '../Promotion';
 import ModalWindow from '../ModalWindow';
 
@@ -24,6 +29,20 @@ function ChessBoard() {
       dispatch(setPossibleMovesForPiece(possibleMoves));
     }
   }, [selectedTile, dispatch]);
+
+  useEffect(() => {
+    // Прибрати виділену фігуру та клітинки, на які може походити та ж виділена фігура
+    dispatch(clearSelectedTile());
+    dispatch(clearPossibleMoves());
+
+    //  Всновити чий крок(Чорних чи Білих)
+    dispatch(setCurrentTurn());
+
+    // Перевірка, чи не завершилася гра
+    if (isGameOver()) {
+      console.log('game over');
+    }
+  }, [stateBoard, dispatch]);
 
   return (
     <Wrapper>

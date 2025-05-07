@@ -1,19 +1,18 @@
 import styled, { css } from 'styled-components';
-import Piece from './Piece';
-import { PieceType, TileColor, TileProps } from './types/ChessTypes';
-import { useAppDispatch, useAppSelector } from '../../store';
+
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { transformObjectToSAN } from '../../utils/helpers';
+import { doMove, showPrevMove, showTileColor } from '../../service/chess';
+import { PieceType, TileColor, TileProps } from '../../types/ChessTypes';
+
 import {
-  clearPossibleMoves,
-  clearSelectedTile,
   movePiece,
   setSelectedTile,
   setPrevTwoMoves,
   doCastling,
   openPromotionWindow,
-  setCurrentTurn,
-} from './chessSlice';
-import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showPrevMove, showTileColor } from './service/chess';
+} from '../../store/chessSlice';
+import Piece from './Piece';
 
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
@@ -31,29 +30,29 @@ function Tile({ column, row, piece }: TileProps) {
   function handleMove() {
     if (selectedTile && isPossibleMove) {
       // 1. Зробити крок в chess.js
-      doMove(transformObjectToSAN(selectedTile), attackedTileString);
+      const moveType = doMove(
+        transformObjectToSAN(selectedTile),
+        attackedTileString
+      );
 
       // 2. Отримати інформацію про цей крок з історії кроків з chess.js
       dispatch(setPrevTwoMoves(showPrevMove()));
 
-      // 2.1 Ідентифікація назви кроку
-      const currentMove = possibleMovesForPiece.find(
-        move => move.to === attackedTileString
-      )?.name;
-
       // 3. Зробити крок
-      if (currentMove === 'O-O' || currentMove === 'O-O-O') {
+      if (moveType === 'O-O' || moveType === 'O-O-O') {
         // 3.1 Якщо рокірування
         dispatch(
           doCastling({
-            type: currentMove,
+            type: moveType,
             color: (selectedTile.piece as PieceType).color,
           })
         );
-      } else if (currentMove?.includes('=')) {
+      }
+      if (moveType === 'promotion') {
         // 3.2 Якщо перетворення пішака
         dispatch(openPromotionWindow());
-      } else {
+      }
+      if (moveType === 'normal') {
         // 3.3 Всі інші кроки
         dispatch(
           movePiece({
@@ -62,13 +61,6 @@ function Tile({ column, row, piece }: TileProps) {
           })
         );
       }
-
-      // 4. Прибрати виділену фігуру та клітинки, на які може походити та ж виділена фігура
-      dispatch(clearSelectedTile());
-      dispatch(clearPossibleMoves());
-
-      // 5. Всновити чий крок(Чорних чи Білих)
-      dispatch(setCurrentTurn());
     }
   }
 
@@ -94,10 +86,14 @@ function Tile({ column, row, piece }: TileProps) {
     (e.target as HTMLDivElement).style.display = 'block';
   }
 
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+  }
+
   return (
     <Wrapper
       onDrop={handleMove}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+      onDragOver={handleDragOver}
       onClick={handleClick}
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}

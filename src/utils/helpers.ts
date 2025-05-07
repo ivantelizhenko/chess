@@ -1,4 +1,4 @@
-import { TileProps, TileType } from '../components/Chess/types/ChessTypes';
+import { TileProps, TileType } from '../types/ChessTypes';
 
 export function createBoard() {
   const startedBoard: TileProps[] = [
