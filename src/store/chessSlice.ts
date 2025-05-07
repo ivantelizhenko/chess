@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../utils/helpers';
 import {
-  PieceColor,
+  SideColor,
   PieceFigures,
   PossibleMoveData,
   PrevMoveObject,
@@ -20,6 +20,7 @@ const initialState: StateType = {
   turn: 'w',
   time: { white: 600, black: 600 },
   isGameOver: { is: false, message: '' },
+  side: 'w',
 };
 
 const chessSlice = createSlice({
@@ -72,7 +73,7 @@ const chessSlice = createSlice({
     },
     doCastling(
       state,
-      action: PayloadAction<{ type: 'O-O' | 'O-O-O'; color: PieceColor }>
+      action: PayloadAction<{ type: 'O-O' | 'O-O-O'; color: SideColor }>
     ) {
       const isOO = action.payload.type === 'O-O';
       const row = action.payload.color === 'w' ? '1' : '8';
@@ -107,7 +108,7 @@ const chessSlice = createSlice({
       state,
       action: PayloadAction<{
         name: Omit<PieceFigures, 'k' | 'p'>;
-        color: PieceColor;
+        color: SideColor;
       }>
     ) {
       const promotedPiece = action.payload;

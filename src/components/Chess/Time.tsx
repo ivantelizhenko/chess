@@ -31,6 +31,8 @@ const Wrapper = styled.div`
   border-radius: 3px;
   font-weight: 600;
   font-size: 1.5rem;
+
+  transform: var(--sideTransform);
 `;
 
 export default Time;

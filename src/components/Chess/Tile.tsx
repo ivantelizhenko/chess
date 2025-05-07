@@ -75,11 +75,33 @@ function Tile({ column, row, piece }: TileProps) {
     handleMove();
   }
 
-  function handleDragStart(e: React.DragEvent<HTMLDivElement>) {
-    setTimeout(() => {
-      (e.target as HTMLDivElement).style.display = 'none';
-    }, 0);
+  function handleDragStart(e: React.DragEvent) {
     handleSetSelectedTile();
+    const target = e.target as HTMLElement;
+    setTimeout(() => {
+      target.style.display = 'none';
+    }, 0);
+
+    const ghost = target.cloneNode(true) as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    ghost.style.transform = 'scaleY(1)';
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.height = `${rect.height}px`;
+
+    document.body.appendChild(ghost);
+
+    // Центрування ghost на центр курсора
+    e.dataTransfer.setDragImage(
+      ghost,
+      ghost.offsetWidth / 2 - 12,
+      ghost.offsetHeight / 2 - 4
+    );
+
+    // Видаляємо його на наступному тіку
+    requestAnimationFrame(() => {
+      document.body.removeChild(ghost);
+    });
   }
 
   function handleDragEnd(e: React.DragEvent<HTMLDivElement>) {
@@ -110,6 +132,7 @@ function Tile({ column, row, piece }: TileProps) {
           draggable={true}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          style={{ transform: 'var(--sideTransform)' }}
         />
       )}
     </Wrapper>
@@ -121,13 +144,11 @@ const tileColors = {
     default: 'var(--color-tile-light)',
     selected: 'var(--color-tile-light-selected)',
     possibleMove: 'var(--color-gray-600)',
-    text: 'var(--color-tile-dark)',
   },
   dark: {
     default: 'var(--color-tile-dark)',
     selected: 'var(--color-tile-dark-selected)',
     possibleMove: 'var(--color-gray-800)',
-    text: 'var(--color-tile-light)',
   },
 };
 
@@ -152,8 +173,6 @@ const Wrapper = styled.div<{
 }>`
   width: 100%;
   height: 100%;
-
-  --textColor: ${({ $light }) => tileColors[$light].text};
 
   position: relative;
   background-color: ${props => getBackgroundColor(props)};

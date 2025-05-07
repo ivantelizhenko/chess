@@ -29,6 +29,8 @@ const ChessButton = styled(DefaultButton)`
   gap: 12px;
   border-radius: 4px;
 
+  transform: var(--sideTransform);
+
   font-size: 1.25rem;
   letter-spacing: 2px;
   font-weight: 500;

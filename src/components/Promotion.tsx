@@ -15,14 +15,13 @@ const variationsOfPieces = [
 function Promotion() {
   const dispatch = useAppDispatch();
   const color = useAppSelector(state => state.chess.turn);
-  const prevColor = color === 'w' ? 'b' : 'w';
 
   function handleSubmit(e: React.MouseEvent<HTMLElement>) {
     const selectedPiece = e.currentTarget.dataset.name as Omit<
       PieceFigures,
       'p' | 'k'
     >;
-    dispatch(doPromotion({ name: selectedPiece, color: prevColor }));
+    dispatch(doPromotion({ name: selectedPiece, color }));
   }
 
   return (
@@ -35,7 +34,7 @@ function Promotion() {
         >
           <Piece
             piece={piece.name as PieceFigures}
-            color={prevColor}
+            color={color}
             style={{ width: '100%', height: '100%' }}
           />
         </PromotionPieceButton>
