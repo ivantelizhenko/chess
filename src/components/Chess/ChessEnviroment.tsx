@@ -5,13 +5,21 @@ import Buttons from './Buttons';
 import Time from './Time';
 import useInterval from '../hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import { runTime, setGameOver } from '../../store/chessSlice';
+import {
+  closeSurrenderWindow,
+  runTime,
+  setGameOver,
+} from '../../store/chessSlice';
 import { useEffect } from 'react';
 import { SideColor } from '../../types/ChessTypes';
+import ModalWindow from '../ModalWindow';
+import Question from '../Question';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-  const { isGameOver, time, side } = useAppSelector(state => state.chess);
+  const { isGameOver, time, side, surrenderWindowIsOpen } = useAppSelector(
+    state => state.chess
+  );
 
   // Таймер гравців
   useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
@@ -26,12 +34,30 @@ function ChessEnviroment() {
     }
   }, [time.white, time.black, dispatch]);
 
+  function handleSubmitSurrender() {
+    const sideWord = side === 'w' ? 'White' : 'Black';
+    dispatch(setGameOver(`${sideWord} surender`));
+    dispatch(closeSurrenderWindow());
+  }
+
+  function handleDeclineSurrender() {
+    dispatch(closeSurrenderWindow());
+  }
+
   return (
     <Wrapper $side={side}>
       <Time type="b" />
       <ChessBoard />
       <Time type="w" />
       <Buttons />
+      <ModalWindow isOpen={surrenderWindowIsOpen}>
+        <Question
+          onSubmit={handleSubmitSurrender}
+          onReject={handleDeclineSurrender}
+        >
+          Are you sure you want to surrender?
+        </Question>
+      </ModalWindow>
     </Wrapper>
   );
 }

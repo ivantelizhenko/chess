@@ -17,9 +17,8 @@ import Piece from './Piece';
 function Tile({ column, row, piece }: TileProps) {
   const dispatch = useAppDispatch();
   const tileColor = showTileColor(`${column}${row}`) as TileColor;
-  const { selectedTile, possibleMovesForPiece, prevTwoMoves } = useAppSelector(
-    state => state.chess
-  );
+  const { selectedTile, possibleMovesForPiece, prevTwoMoves, side } =
+    useAppSelector(state => state.chess);
 
   const attackedTile = { column, row };
   const attackedTileString = column + row;
@@ -28,7 +27,7 @@ function Tile({ column, row, piece }: TileProps) {
     .includes(attackedTileString);
 
   function handleMove() {
-    if (selectedTile && isPossibleMove) {
+    if (selectedTile && isPossibleMove && side === selectedTile?.piece.color) {
       // 1. Зробити крок в chess.js
       const moveType = doMove(
         transformObjectToSAN(selectedTile),

@@ -40,6 +40,7 @@ export type StateType = {
   time: { white: number; black: number };
   isGameOver: { is: boolean; message: string };
   side: SideColor;
+  surrenderWindowIsOpen: boolean;
 };
 
 export type PrevMoveObject = { from: string; to: string; piece: PieceFigures };

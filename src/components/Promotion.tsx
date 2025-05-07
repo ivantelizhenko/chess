@@ -53,8 +53,6 @@ const PromotionPieceButton = styled(ButtonDefault)`
 `;
 
 const Wrapper = styled.div`
-  background-color: var(--color-gray-100);
-  place-self: center;
   display: flex;
   gap: 24px;
   width: 30%;

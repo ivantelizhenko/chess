@@ -36,6 +36,12 @@ const Wrapper = styled.dialog`
     backdrop-filter: blur(3px);
     background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
   }
+
+  & > :first-child {
+    box-shadow: 0 0px 16px rgba(0, 0, 0, 0.5);
+    background-color: var(--color-gray-100);
+    place-self: center;
+  }
 `;
 
 export default ModalWindow;

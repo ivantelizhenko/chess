@@ -23,11 +23,12 @@ function ChessBoard() {
     promotion,
     selectedTile,
     board: stateBoard,
+    side,
   } = useAppSelector(state => state.chess);
 
   // Вибирати елемент
   useEffect(() => {
-    if (selectedTile) {
+    if (selectedTile && side === selectedTile.piece.color) {
       const possibleMoves = showPossibleMovesForPiece(
         selectedTile.column,
         selectedTile.row
@@ -35,7 +36,7 @@ function ChessBoard() {
 
       dispatch(setPossibleMovesForPiece(possibleMoves));
     }
-  }, [selectedTile, dispatch]);
+  }, [selectedTile, dispatch, side]);
 
   // Очистити вибрану клітинку та можливі кроки, зміна кроку та завершення гри
   useEffect(() => {

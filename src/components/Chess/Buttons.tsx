@@ -1,10 +1,18 @@
 import styled from 'styled-components';
 import DefaultButton from '../DefaultButton';
+import { useAppDispatch } from '../../store/store';
+import { openSurrenderWindow } from '../../store/chessSlice';
 
 function Buttons() {
+  const dispatch = useAppDispatch();
+
+  function handleOpenSurrenderWindow() {
+    dispatch(openSurrenderWindow());
+  }
+
   return (
     <Wrapper>
-      <ChessButton>
+      <ChessButton onClick={handleOpenSurrenderWindow}>
         <span>Draw</span>
       </ChessButton>
       <ChessButton>

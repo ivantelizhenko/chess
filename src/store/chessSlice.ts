@@ -21,6 +21,7 @@ const initialState: StateType = {
   time: { white: 600, black: 600 },
   isGameOver: { is: false, message: '' },
   side: 'w',
+  surrenderWindowIsOpen: false,
 };
 
 const chessSlice = createSlice({
@@ -167,6 +168,16 @@ const chessSlice = createSlice({
     setGameOver(state, action: PayloadAction<string>) {
       state.isGameOver = { is: true, message: action.payload };
     },
+    doSurrender(state) {
+      const side = state.side === 'w' ? 'White' : 'Black';
+      state.isGameOver = { is: true, message: `${side} surrender` };
+    },
+    openSurrenderWindow(state) {
+      state.surrenderWindowIsOpen = true;
+    },
+    closeSurrenderWindow(state) {
+      state.surrenderWindowIsOpen = false;
+    },
   },
 });
 
@@ -183,6 +194,8 @@ export const {
   setCurrentTurn,
   runTime,
   setGameOver,
+  openSurrenderWindow,
+  closeSurrenderWindow,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;
