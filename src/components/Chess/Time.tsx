@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { useAppSelector } from '../../store/store';
+import { convertTime } from '../../utils/helpers';
 
 const times = {
   w: {
@@ -14,10 +15,13 @@ const times = {
   },
 };
 
-function Time({ children, type }: { children: ReactNode; type: 'w' | 'b' }) {
+function Time({ type }: { type: 'w' | 'b' }) {
+  const { white, black } = useAppSelector(state => state.chess.time);
+  const time = convertTime(type === 'w' ? white : black);
+
   const style = times[type];
 
-  return <Wrapper style={style}>{children}</Wrapper>;
+  return <Wrapper style={style}>{time}</Wrapper>;
 }
 
 const Wrapper = styled.div`

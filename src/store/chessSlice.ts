@@ -158,7 +158,10 @@ const chessSlice = createSlice({
     runTime(state) {
       if (state.turn === 'w') {
         state.time.white -= 1;
-      } else state.time.black -= 1;
+      }
+      if (state.turn === 'b') {
+        state.time.black -= 1;
+      }
     },
     setGameOver(state, action: PayloadAction<string>) {
       state.isGameOver = { is: true, message: action.payload };

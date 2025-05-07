@@ -3,20 +3,33 @@ import ChessBoard from './ChessBoard';
 
 import Buttons from './Buttons';
 import Time from './Time';
-import { useAppSelector } from '../../store/store';
-import { convertTime } from '../../utils/helpers';
+import useInterval from '../hooks/useInterval';
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { runTime, setGameOver } from '../../store/chessSlice';
+import { useEffect } from 'react';
 
 function ChessEnviroment() {
-  const { white, black } = useAppSelector(state => state.chess.time);
+  const dispatch = useAppDispatch();
+  const { isGameOver, time } = useAppSelector(state => state.chess);
 
-  const blackTime = convertTime(black);
-  const whiteTime = convertTime(white);
+  // Таймер гравців
+  useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
+
+  // Слідкування за часом
+  useEffect(() => {
+    if (time.white === 0) {
+      dispatch(setGameOver('White time is over.'));
+    }
+    if (time.black === 0) {
+      dispatch(setGameOver('Black time is over.'));
+    }
+  }, [time.white, time.black, dispatch]);
 
   return (
     <Wrapper>
-      <Time type="b">{blackTime}</Time>
+      <Time type="b" />
       <ChessBoard />
-      <Time type="w">{whiteTime}</Time>
+      <Time type="w" />
       <Buttons />
     </Wrapper>
   );

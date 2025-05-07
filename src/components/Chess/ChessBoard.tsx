@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import {
   clearPossibleMoves,
   clearSelectedTile,
-  runTime,
   setCurrentTurn,
   setGameOver,
   setPossibleMovesForPiece,
@@ -18,20 +17,13 @@ import {
 import Promotion from '../Promotion';
 import ModalWindow from '../ModalWindow';
 
-import useInterval from '../hooks/useInterval';
-
 function ChessBoard() {
   const dispatch = useAppDispatch();
   const {
     promotion,
     selectedTile,
     board: stateBoard,
-    time,
-    isGameOver,
   } = useAppSelector(state => state.chess);
-
-  // Таймер гравців
-  useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
 
   // Вибирати елемент
   useEffect(() => {
@@ -60,16 +52,6 @@ function ChessBoard() {
       dispatch(setGameOver(gameOverMessage!));
     }
   }, [stateBoard, dispatch]);
-
-  // Слідкування за часом
-  useEffect(() => {
-    if (time.white === 0) {
-      dispatch(setGameOver('White time is over.'));
-    }
-    if (time.black === 0) {
-      dispatch(setGameOver('Black time is over.'));
-    }
-  }, [time.white, time.black, dispatch]);
 
   return (
     <Wrapper>
