@@ -27,8 +27,7 @@ function Tile({ column, row, piece }: TileProps) {
     .includes(attackedTileString);
 
   function handleMove() {
-    // if (selectedTile && isPossibleMove && side === selectedTile?.piece.color) {
-    if (selectedTile && isPossibleMove) {
+    if (selectedTile && isPossibleMove && side === selectedTile?.piece.color) {
       // 1. Зробити крок в chess.js
       const moveType = doMove(
         transformObjectToSAN(selectedTile),

@@ -16,6 +16,7 @@ export type StateType = {
   isGameOver: { is: boolean; message: string; type: GameOverType | null };
   side: SideColor;
   isOpenModalWindow: ModalWindowType;
+  offerDraw: { from: SideColor | null };
 };
 
 export type ModalWindowType =

@@ -24,6 +24,7 @@ const initialState: StateType = {
   isGameOver: { is: false, message: '', type: null },
   side: 'w',
   isOpenModalWindow: null,
+  offerDraw: { from: null },
 };
 
 const chessSlice = createSlice({
@@ -192,6 +193,18 @@ const chessSlice = createSlice({
     closeModalWindow(state) {
       state.isOpenModalWindow = null;
     },
+    toOfferDraw(state) {
+      state.offerDraw.from = state.side;
+      state.isOpenModalWindow = 'offerDrawGet';
+    },
+    clearOfferDraw(state) {
+      state.offerDraw.from = null;
+    },
+
+    //temporary
+    setSide(state, action: PayloadAction<SideColor>) {
+      state.side = action.payload;
+    },
   },
 });
 
@@ -209,6 +222,9 @@ export const {
   setGameOver,
   openModalWindow,
   closeModalWindow,
+  toOfferDraw,
+  clearOfferDraw,
+  setSide,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

@@ -10,7 +10,7 @@ function GameOverWindow() {
   const sideWin = turn === 'w' ? 'Black' : 'White';
 
   const messageWin = `${sideWin} win. ${message}.`;
-  const messageDraw = `Draw. ${message}.`;
+  const messageDraw = `${message}.`;
 
   function handleBackToMainMenu() {}
 

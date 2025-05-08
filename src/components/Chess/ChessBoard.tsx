@@ -28,8 +28,7 @@ function ChessBoard() {
 
   // Вибирати елемент
   useEffect(() => {
-    // if (selectedTile && side === selectedTile.piece.color) {
-    if (selectedTile) {
+    if (selectedTile && side === selectedTile.piece.color) {
       const possibleMoves = showPossibleMovesForPiece(
         selectedTile.column,
         selectedTile.row

@@ -89,9 +89,17 @@ export function isGameOver() {
   const checks: [() => boolean, string, GameOverType][] = [
     [() => chess.isCheckmate(), 'Checkmate', 'win'],
     [() => chess.isStalemate(), 'Stalemate', 'draw'],
-    [() => chess.isDrawByFiftyMoves(), 'Due to 50 step rule', 'draw'],
-    [() => chess.isThreefoldRepetition(), 'Due to triple repetition', 'draw'],
-    [() => chess.isInsufficientMaterial(), 'Due to lack of material', 'draw'],
+    [() => chess.isDrawByFiftyMoves(), 'Draw due to 50 step rule', 'draw'],
+    [
+      () => chess.isThreefoldRepetition(),
+      'Draw due to triple repetition',
+      'draw',
+    ],
+    [
+      () => chess.isInsufficientMaterial(),
+      'Draw due to lack of material',
+      'draw',
+    ],
     [() => chess.isDraw(), 'Draw', 'draw'],
   ];
 

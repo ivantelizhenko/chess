@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import { useAppSelector } from '../../store/store';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { convertTime } from '../../utils/helpers';
+import { setSide } from '../../store/chessSlice';
+import { SideColor } from '../../types/ChessTypes';
 
 const times = {
   w: {
@@ -16,12 +18,22 @@ const times = {
 };
 
 function Time({ type }: { type: 'w' | 'b' }) {
+  const dispatch = useAppDispatch();
   const { white, black } = useAppSelector(state => state.chess.time);
   const time = convertTime(type === 'w' ? white : black);
 
   const style = times[type];
 
-  return <Wrapper style={style}>{time}</Wrapper>;
+  //temporary
+  function handleSetSide() {
+    dispatch(setSide(type as SideColor));
+  }
+
+  return (
+    <Wrapper style={style} onClick={handleSetSide}>
+      {time}
+    </Wrapper>
+  );
 }
 
 const Wrapper = styled.div`

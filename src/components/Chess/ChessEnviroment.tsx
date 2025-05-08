@@ -5,7 +5,13 @@ import Buttons from './Buttons';
 import Time from './Time';
 import useInterval from '../hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import { closeModalWindow, runTime, setGameOver } from '../../store/chessSlice';
+import {
+  closeModalWindow,
+  toOfferDraw,
+  runTime,
+  setGameOver,
+  clearOfferDraw,
+} from '../../store/chessSlice';
 import { useEffect } from 'react';
 import { SideColor } from '../../types/ChessTypes';
 import ModalWindow from '../ModalWindow';
@@ -14,9 +20,8 @@ import GameOverWindow from '../GameOverWindow';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-  const { isGameOver, time, side, isOpenModalWindow } = useAppSelector(
-    state => state.chess
-  );
+  const { isGameOver, time, side, isOpenModalWindow, offerDraw } =
+    useAppSelector(state => state.chess);
 
   // Таймер гравців
   useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
@@ -31,17 +36,28 @@ function ChessEnviroment() {
     }
   }, [time.white, time.black, dispatch]);
 
+  // Функції модальних вікон(5)
   function handleSubmitSurrender() {
     const sideWord = side === 'w' ? 'White' : 'Black';
     dispatch(setGameOver({ message: `${sideWord} surrender`, type: 'win' }));
-    // dispatch(closeModalWindow());
   }
 
   function handleCloseModal() {
     dispatch(closeModalWindow());
   }
 
-  function handleSubmitOfferDrawSend() {}
+  function handleSubmitOfferDrawSend() {
+    dispatch(toOfferDraw());
+    console.log(offerDraw.from, side);
+  }
+
+  function handleSubmitOfferDrawGet() {
+    dispatch(setGameOver({ message: `Draw`, type: 'draw' }));
+  }
+  function handleRejectOfferDrawGet() {
+    dispatch(clearOfferDraw());
+    dispatch(closeModalWindow());
+  }
 
   return (
     <Wrapper $side={side}>
@@ -55,8 +71,21 @@ function ChessEnviroment() {
         </Question>
       </ModalWindow>
       <ModalWindow isOpen={isOpenModalWindow === 'offerDrawSend'}>
-        <Question onSubmit={handleSubmitSurrender} onReject={handleCloseModal}>
+        <Question
+          onSubmit={handleSubmitOfferDrawSend}
+          onReject={handleCloseModal}
+        >
           Are you sure you want to offer the draw?
+        </Question>
+      </ModalWindow>
+      <ModalWindow
+        isOpen={isOpenModalWindow === 'offerDrawGet' && offerDraw.from !== side}
+      >
+        <Question
+          onSubmit={handleSubmitOfferDrawGet}
+          onReject={handleRejectOfferDrawGet}
+        >
+          Are you agree with draw?
         </Question>
       </ModalWindow>
       <ModalWindow isOpen={isOpenModalWindow === 'gameOver'}>
