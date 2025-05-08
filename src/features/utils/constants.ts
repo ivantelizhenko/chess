@@ -23,3 +23,25 @@ export const WEIGHTS = {
   medium: 600,
   bold: 800,
 };
+
+export const MENU_SELECT_DATA = {
+  times: [
+    { title: 'Choose time', value: '', id: 'a0' },
+    { title: '1 + 0', value: '1 + 0', id: 'a1' },
+    { title: '2 + 1', value: '2 + 1', id: 'a2' },
+    { title: '3 + 0', value: '3 + 0', id: 'a3' },
+    { title: '3 + 2', value: '3 + 2', id: 'a4' },
+    { title: '5 + 0', value: '5 + 0', id: 'a5' },
+    { title: '5 + 3', value: '5 + 3', id: 'a6' },
+    { title: '10 + 0', value: '10 + 0', id: 'a7' },
+    { title: '10 + 5', value: '10 + 5', id: 'a8' },
+    { title: '15 + 10', value: '15 + 10', id: 'a9' },
+    { title: '30 + 0', value: '30 + 0', id: 'b1' },
+    { title: '30 + 20', value: '30 + 20', id: 'b2' },
+  ],
+  sides: [
+    { title: 'Choose side', value: '', id: 'b3' },
+    { title: 'White', value: 'w', id: 'b4' },
+    { title: 'Black', value: 'b', id: 'b5' },
+  ],
+};
