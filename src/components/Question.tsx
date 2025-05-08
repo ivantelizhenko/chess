@@ -5,7 +5,7 @@ import styled from 'styled-components';
 interface QuestionProps {
   children: ReactNode;
   onSubmit: () => void;
-  onReject: () => void;
+  onReject?: () => void;
 }
 
 function Question({ children, onSubmit, onReject }: QuestionProps) {

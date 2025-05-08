@@ -1,4 +1,5 @@
 import { Chess, Square } from 'chess.js';
+import { GameOverType } from '../types/ChessTypes';
 
 const chess = new Chess();
 
@@ -82,19 +83,19 @@ export function fixWrongPromotion(from: string, to: string, promotion: string) {
   chess.move(move);
 }
 
-export function isGameOver(): string | null {
+export function isGameOver() {
   if (!chess.isGameOver()) return null;
 
-  const checks: [() => boolean, string][] = [
-    [() => chess.isCheckmate(), 'Мат'],
-    [() => chess.isStalemate(), 'Пат'],
-    [() => chess.isDrawByFiftyMoves(), 'Нічия через правило 50 кроків'],
-    [() => chess.isThreefoldRepetition(), 'Нічия через триразове повторення'],
-    [() => chess.isInsufficientMaterial(), 'Нічия через нестачу матеріалу'],
-    [() => chess.isDraw(), 'Нічия'],
+  const checks: [() => boolean, string, GameOverType][] = [
+    [() => chess.isCheckmate(), 'Checkmate', 'win'],
+    [() => chess.isStalemate(), 'Stalemate', 'draw'],
+    [() => chess.isDrawByFiftyMoves(), 'Due to 50 step rule', 'draw'],
+    [() => chess.isThreefoldRepetition(), 'Due to triple repetition', 'draw'],
+    [() => chess.isInsufficientMaterial(), 'Due to lack of material', 'draw'],
+    [() => chess.isDraw(), 'Draw', 'draw'],
   ];
 
   const found = checks.find(([predicate]) => predicate());
 
-  return found ? found[1] : null;
+  return found ? { message: found[1], type: found[2] } : null;
 }

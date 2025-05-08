@@ -11,7 +11,7 @@ import {
   setPossibleMovesForPiece,
 } from '../../store/chessSlice';
 import {
-  isGameOver as isGameOverchess,
+  isGameOver as isGameOverChess,
   showPossibleMovesForPiece,
 } from '../../service/chess';
 import Promotion from '../Promotion';
@@ -28,7 +28,8 @@ function ChessBoard() {
 
   // Вибирати елемент
   useEffect(() => {
-    if (selectedTile && side === selectedTile.piece.color) {
+    // if (selectedTile && side === selectedTile.piece.color) {
+    if (selectedTile) {
       const possibleMoves = showPossibleMovesForPiece(
         selectedTile.column,
         selectedTile.row
@@ -48,9 +49,14 @@ function ChessBoard() {
     dispatch(setCurrentTurn());
 
     // Перевірка, чи не завершилася гра
-    if (isGameOverchess()) {
-      const gameOverMessage = isGameOverchess();
-      dispatch(setGameOver(gameOverMessage!));
+    if (isGameOverChess()) {
+      const gameOverResults = isGameOverChess()!;
+      dispatch(
+        setGameOver({
+          message: gameOverResults?.message,
+          type: gameOverResults?.type,
+        })
+      );
     }
   }, [stateBoard, dispatch]);
 

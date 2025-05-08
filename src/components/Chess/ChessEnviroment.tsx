@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { SideColor } from '../../types/ChessTypes';
 import ModalWindow from '../ModalWindow';
 import Question from '../Question';
+import GameOverWindow from '../GameOverWindow';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
@@ -23,17 +24,17 @@ function ChessEnviroment() {
   // Слідкування за часом
   useEffect(() => {
     if (time.white === 0) {
-      dispatch(setGameOver('White time is over.'));
+      dispatch(setGameOver({ message: 'White time is over', type: 'win' }));
     }
     if (time.black === 0) {
-      dispatch(setGameOver('Black time is over.'));
+      dispatch(setGameOver({ message: 'Black time is over', type: 'win' }));
     }
   }, [time.white, time.black, dispatch]);
 
   function handleSubmitSurrender() {
     const sideWord = side === 'w' ? 'White' : 'Black';
-    dispatch(setGameOver(`${sideWord} surrender`));
-    dispatch(closeModalWindow());
+    dispatch(setGameOver({ message: `${sideWord} surrender`, type: 'win' }));
+    // dispatch(closeModalWindow());
   }
 
   function handleCloseModal() {
@@ -57,6 +58,9 @@ function ChessEnviroment() {
         <Question onSubmit={handleSubmitSurrender} onReject={handleCloseModal}>
           Are you sure you want to offer the draw?
         </Question>
+      </ModalWindow>
+      <ModalWindow isOpen={isOpenModalWindow === 'gameOver'}>
+        <GameOverWindow />
       </ModalWindow>
     </Wrapper>
   );

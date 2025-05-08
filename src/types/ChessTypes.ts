@@ -3,6 +3,7 @@ export type ColumnType = 'h' | 'g' | 'f' | 'e' | 'd' | 'c' | 'b' | 'a';
 export type SideColor = 'w' | 'b';
 export type PieceFigures = 'p' | 'n' | 'r' | 'b' | 'q' | 'k';
 export type TileColor = 'light' | 'dark';
+export type GameOverType = 'win' | 'draw';
 
 export type StateType = {
   board: TileProps[];
@@ -12,7 +13,7 @@ export type StateType = {
   promotionPiece: Omit<PieceFigures, 'k' | 'p'> | null;
   turn: SideColor;
   time: { white: number; black: number };
-  isGameOver: { is: boolean; message: string };
+  isGameOver: { is: boolean; message: string; type: GameOverType | null };
   side: SideColor;
   isOpenModalWindow: ModalWindowType;
 };

@@ -9,6 +9,7 @@ import {
   TileType,
   TileWithoutPieceType,
   ModalWindowType,
+  GameOverType,
 } from '../types/ChessTypes';
 import { fixWrongPromotion, getCurretnTurn } from '../service/chess';
 
@@ -20,7 +21,7 @@ const initialState: StateType = {
   promotionPiece: null,
   turn: 'w',
   time: { white: 600, black: 600 },
-  isGameOver: { is: false, message: '' },
+  isGameOver: { is: false, message: '', type: null },
   side: 'w',
   isOpenModalWindow: null,
 };
@@ -163,12 +164,24 @@ const chessSlice = createSlice({
         state.time.black -= 1;
       }
     },
-    setGameOver(state, action: PayloadAction<string>) {
-      state.isGameOver = { is: true, message: action.payload };
+    setGameOver(
+      state,
+      action: PayloadAction<{ message: string; type: GameOverType }>
+    ) {
+      state.isGameOver = {
+        is: true,
+        message: action.payload.message,
+        type: action.payload.type,
+      };
+      state.isOpenModalWindow = 'gameOver';
     },
     doSurrender(state) {
       const side = state.side === 'w' ? 'White' : 'Black';
-      state.isGameOver = { is: true, message: `${side} surrender` };
+      state.isGameOver = {
+        is: true,
+        message: `${side} surrender`,
+        type: 'win',
+      };
     },
     openModalWindow(
       state,
