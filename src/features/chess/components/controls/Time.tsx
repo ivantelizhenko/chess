@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { convertTime } from '../../utils/helpers';
-import { setSide } from '../../store/chessSlice';
-import { SideColor } from '../../types/ChessTypes';
+
+import { useAppDispatch, useAppSelector } from '../../../../store/store';
+
+import { convertTime } from '../../../utils/helpers';
+import { setSide } from '../../../store/statusSlice';
 
 const times = {
   w: {
@@ -18,15 +19,15 @@ const times = {
 };
 
 function Time({ type }: { type: 'w' | 'b' }) {
-  const dispatch = useAppDispatch();
-  const { white, black } = useAppSelector(state => state.chess.time);
+  const { white, black } = useAppSelector(state => state.timer.time);
   const time = convertTime(type === 'w' ? white : black);
 
   const style = times[type];
 
-  //temporary
+  // temporary
+  const dispatch = useAppDispatch();
   function handleSetSide() {
-    dispatch(setSide(type as SideColor));
+    dispatch(setSide(type));
   }
 
   return (

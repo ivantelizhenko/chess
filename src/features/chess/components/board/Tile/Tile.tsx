@@ -1,24 +1,28 @@
 import styled, { css } from 'styled-components';
 
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { transformObjectToSAN } from '../../utils/helpers';
-import { doMove, showPrevMove, showTileColor } from '../../service/chess';
-import { PieceType, TileColor, TileProps } from '../../types/ChessTypes';
-
+import { useAppDispatch, useAppSelector } from '../../../../../store/store';
+import Piece from '../../pieces/Piece';
 import {
-  movePiece,
-  setSelectedTile,
-  setPrevTwoMoves,
   doCastling,
-  openModalWindow,
-} from '../../store/chessSlice';
-import Piece from './Piece';
+  movePiece,
+  setPrevTwoMoves,
+  setSelectedTile,
+} from '../../../../store/boardSlice';
+import { openModalWindow } from '../../../../store/uiSlice';
 
-function Tile({ column, row, piece }: TileProps) {
+import { doMove, showPrevMove, showTileColor } from '../../../../service/chess';
+import { transformObjectToSAN } from '../../../../utils/helpers';
+import { PieceType, TileType } from './TileTypes';
+
+type TileColor = 'light' | 'dark';
+
+function Tile({ column, row, piece }: TileType) {
   const dispatch = useAppDispatch();
   const tileColor = showTileColor(`${column}${row}`) as TileColor;
-  const { selectedTile, possibleMovesForPiece, prevTwoMoves, side } =
-    useAppSelector(state => state.chess);
+  const side = useAppSelector(state => state.status.side);
+  const { selectedTile, possibleMovesForPiece, prevTwoMoves } = useAppSelector(
+    state => state.board
+  );
 
   const attackedTile = { column, row };
   const attackedTileString = column + row;

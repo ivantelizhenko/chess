@@ -1,9 +1,11 @@
 import styled from 'styled-components';
-import Piece from './Chess/Piece';
-import { PieceFigures } from '../types/ChessTypes';
-import ButtonDefault from './DefaultButton';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { doPromotion } from '../store/chessSlice';
+
+import ButtonDefault from '../../components/DefaultButton';
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { doPromotion } from '../store/boardSlice';
+import Piece from '../chess/components/pieces/Piece';
+import { PieceFigures } from '../chess/components/board/Tile/TileTypes';
+import { closeModalWindow } from '../store/uiSlice';
 
 const variationsOfPieces = [
   { name: 'n', id: Math.random() },
@@ -14,7 +16,7 @@ const variationsOfPieces = [
 
 function Promotion() {
   const dispatch = useAppDispatch();
-  const color = useAppSelector(state => state.chess.turn);
+  const color = useAppSelector(state => state.timer.turn);
 
   function handleSubmit(e: React.MouseEvent<HTMLElement>) {
     const selectedPiece = e.currentTarget.dataset.name as Omit<
@@ -22,6 +24,7 @@ function Promotion() {
       'p' | 'k'
     >;
     dispatch(doPromotion({ name: selectedPiece, color }));
+    dispatch(closeModalWindow());
   }
 
   return (

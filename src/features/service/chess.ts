@@ -1,5 +1,5 @@
 import { Chess, Square } from 'chess.js';
-import { GameOverType } from '../types/ChessTypes';
+import { GameOverType } from '../types/StatusTypes';
 
 const chess = new Chess();
 

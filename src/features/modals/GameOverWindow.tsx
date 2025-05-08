@@ -1,12 +1,11 @@
-import { useAppSelector } from '../store/store';
-import DefaultButton from './DefaultButton';
 import styled from 'styled-components';
 
+import { useAppSelector } from '../../store/store';
+import DefaultButton from '../../components/DefaultButton';
+
 function GameOverWindow() {
-  const {
-    turn,
-    isGameOver: { message, type },
-  } = useAppSelector(state => state.chess);
+  const turn = useAppSelector(state => state.timer.turn);
+  const { message, type } = useAppSelector(state => state.status.isGameOver);
   const sideWin = turn === 'w' ? 'Black' : 'White';
 
   const messageWin = `${sideWin} win. ${message}.`;

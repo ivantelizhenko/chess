@@ -1,6 +1,10 @@
 import { ReactNode } from 'react';
-import DefaultButton from './DefaultButton';
 import styled from 'styled-components';
+
+import { closeModalWindow } from '../store/uiSlice';
+import { useAppDispatch } from '../../store/store';
+
+import DefaultButton from '../../components/DefaultButton';
 
 interface QuestionProps {
   children: ReactNode;
@@ -9,12 +13,21 @@ interface QuestionProps {
 }
 
 function Question({ children, onSubmit, onReject }: QuestionProps) {
+  const dispatch = useAppDispatch();
+  function handlReject() {
+    dispatch(closeModalWindow());
+
+    if (onReject) {
+      onReject();
+    }
+  }
+
   return (
     <Wrapper>
       <p>{children}</p>
 
       <Button onClick={onSubmit}>Yes</Button>
-      <Button onClick={onReject}>No</Button>
+      <Button onClick={handlReject}>No</Button>
     </Wrapper>
   );
 }

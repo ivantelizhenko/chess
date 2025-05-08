@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import DefaultButton from '../DefaultButton';
-import { useAppDispatch } from '../../store/store';
-import { openModalWindow } from '../../store/chessSlice';
+import DefaultButton from '../../../../components/DefaultButton';
+import { useAppDispatch } from '../../../../store/store';
+import { openModalWindow } from '../../../store/uiSlice';
 
 function Buttons() {
   const dispatch = useAppDispatch();

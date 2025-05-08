@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ChessEnviroment from './components/Chess/ChessEnviroment';
+import ChessEnviroment from '../features/chess/components/enviroment/ChessEnviroment';
 
 function App() {
   return (

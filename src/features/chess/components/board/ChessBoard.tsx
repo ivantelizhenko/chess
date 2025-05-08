@@ -1,30 +1,30 @@
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import Tile from './Tile';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { useEffect } from 'react';
-import {
-  clearPossibleMoves,
-  clearSelectedTile,
-  setCurrentTurn,
-  setGameOver,
-  setPossibleMovesForPiece,
-} from '../../store/chessSlice';
+import { useAppDispatch, useAppSelector } from '../../../../store/store';
 import {
   isGameOver as isGameOverChess,
   showPossibleMovesForPiece,
-} from '../../service/chess';
-import Promotion from '../Promotion';
-import ModalWindow from '../ModalWindow';
+} from '../../../service/chess';
+
+import {
+  clearPossibleMoves,
+  clearSelectedTile,
+  setPossibleMovesForPiece,
+} from '../../../store/boardSlice';
+import { setCurrentTurn } from '../../../store/timerSlice';
+import { setGameOver } from '../../../store/statusSlice';
+
+import Tile from './Tile/Tile';
+import Promotion from '../../../modals/Promotion';
+import ModalWindow from '../../../../components/ModalWindow';
+import { openModalWindow } from '../../../store/uiSlice';
 
 function ChessBoard() {
   const dispatch = useAppDispatch();
-  const {
-    selectedTile,
-    board: stateBoard,
-    side,
-    isOpenModalWindow,
-  } = useAppSelector(state => state.chess);
+  const side = useAppSelector(state => state.status.side);
+  const isOpenModalWindow = useAppSelector(state => state.ui.isOpenModalWindow);
+  const { selectedTile, board } = useAppSelector(state => state.board);
 
   // Вибирати елемент
   useEffect(() => {
@@ -38,7 +38,9 @@ function ChessBoard() {
     }
   }, [selectedTile, dispatch, side]);
 
-  // Очистити вибрану клітинку та можливі кроки, зміна кроку та завершення гри
+  // 1) Очистити вибрану клітинку та можливі кроки
+  // 2) Зміна кроку
+  // 3) Завершення гри
   useEffect(() => {
     // Прибрати виділену фігуру та клітинки, на які може походити та ж виділена фігура
     dispatch(clearSelectedTile());
@@ -56,12 +58,13 @@ function ChessBoard() {
           type: gameOverResults?.type,
         })
       );
+      dispatch(openModalWindow('gameOver'));
     }
-  }, [stateBoard, dispatch]);
+  }, [board, dispatch]);
 
   return (
     <Wrapper>
-      {stateBoard.map(delegated => (
+      {board.map(delegated => (
         <Tile key={delegated.column + delegated.row} {...delegated} />
       ))}
 

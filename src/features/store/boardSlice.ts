@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createBoard } from '../utils/helpers';
 import {
-  SideColor,
-  PieceFigures,
   PossibleMoveData,
   PrevMoveObject,
   StateType,
-  TileType,
+} from '../types/BoardTypes';
+import { fixWrongPromotion } from '../service/chess';
+import { SideColor } from '../types/StatusTypes';
+import {
+  PieceFigures,
   TileWithoutPieceType,
-  ModalWindowType,
-  GameOverType,
-} from '../types/ChessTypes';
-import { fixWrongPromotion, getCurretnTurn } from '../service/chess';
+  TileWithPieceType,
+} from '../chess/components/board/Tile/TileTypes';
 
 const initialState: StateType = {
   board: createBoard(),
@@ -19,22 +19,16 @@ const initialState: StateType = {
   possibleMovesForPiece: [],
   prevTwoMoves: [],
   promotionPiece: null,
-  turn: 'w',
-  time: { white: 600, black: 600 },
-  isGameOver: { is: false, message: '', type: null },
-  side: 'w',
-  isOpenModalWindow: null,
-  offerDraw: { from: null },
 };
 
-const chessSlice = createSlice({
+const boardSlice = createSlice({
   name: 'chess',
   initialState,
   reducers: {
     movePiece(
       state,
       action: PayloadAction<{
-        selectedTile: TileType;
+        selectedTile: TileWithPieceType;
         attackedTile: TileWithoutPieceType;
       }>
     ) {
@@ -116,9 +110,6 @@ const chessSlice = createSlice({
       const [columnFrom, rowFrom] = state.prevTwoMoves.at(0)!.from;
       const [columnTo, rowTo] = state.prevTwoMoves.at(0)!.to;
 
-      // Закрити модальне вікно
-      state.isOpenModalWindow = null;
-
       // Ставимо фігуру на нову клітинку
       state.board.find(
         tile => tile.column === columnTo && tile.row === rowTo
@@ -139,7 +130,7 @@ const chessSlice = createSlice({
         promotedPiece.name as string
       );
     },
-    setSelectedTile(state, action: PayloadAction<TileType>) {
+    setSelectedTile(state, action: PayloadAction<TileWithPieceType>) {
       state.selectedTile = action.payload;
     },
     clearSelectedTile(state) {
@@ -154,57 +145,6 @@ const chessSlice = createSlice({
     setPrevTwoMoves(state, action: PayloadAction<PrevMoveObject[]>) {
       state.prevTwoMoves = action.payload;
     },
-    setCurrentTurn(state) {
-      state.turn = getCurretnTurn();
-    },
-    runTime(state) {
-      if (state.turn === 'w') {
-        state.time.white -= 1;
-      }
-      if (state.turn === 'b') {
-        state.time.black -= 1;
-      }
-    },
-    setGameOver(
-      state,
-      action: PayloadAction<{ message: string; type: GameOverType }>
-    ) {
-      state.isGameOver = {
-        is: true,
-        message: action.payload.message,
-        type: action.payload.type,
-      };
-      state.isOpenModalWindow = 'gameOver';
-    },
-    doSurrender(state) {
-      const side = state.side === 'w' ? 'White' : 'Black';
-      state.isGameOver = {
-        is: true,
-        message: `${side} surrender`,
-        type: 'win',
-      };
-    },
-    openModalWindow(
-      state,
-      action: PayloadAction<Omit<ModalWindowType, 'null'>>
-    ) {
-      state.isOpenModalWindow = action.payload as ModalWindowType;
-    },
-    closeModalWindow(state) {
-      state.isOpenModalWindow = null;
-    },
-    toOfferDraw(state) {
-      state.offerDraw.from = state.side;
-      state.isOpenModalWindow = 'offerDrawGet';
-    },
-    clearOfferDraw(state) {
-      state.offerDraw.from = null;
-    },
-
-    //temporary
-    setSide(state, action: PayloadAction<SideColor>) {
-      state.side = action.payload;
-    },
   },
 });
 
@@ -217,14 +157,6 @@ export const {
   setPossibleMovesForPiece,
   clearPossibleMoves,
   setPrevTwoMoves,
-  setCurrentTurn,
-  runTime,
-  setGameOver,
-  openModalWindow,
-  closeModalWindow,
-  toOfferDraw,
-  clearOfferDraw,
-  setSide,
-} = chessSlice.actions;
+} = boardSlice.actions;
 
-export default chessSlice.reducer;
+export default boardSlice.reducer;

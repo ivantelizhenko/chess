@@ -1,10 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import chessReducer from './chessSlice';
+import boardReducer from '../features/store/boardSlice';
+import uiReducer from '../features/store/uiSlice';
+import timerReducer from '../features/store/timerSlice';
+import statusReducer from '../features/store/statusSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const store = configureStore({
   reducer: {
-    chess: chessReducer,
+    board: boardReducer,
+    ui: uiReducer,
+    timer: timerReducer,
+    status: statusReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

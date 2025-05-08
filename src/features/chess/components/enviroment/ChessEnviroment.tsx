@@ -1,27 +1,30 @@
-import styled from 'styled-components';
-import ChessBoard from './ChessBoard';
-
-import Buttons from './Buttons';
-import Time from './Time';
-import useInterval from '../hooks/useInterval';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import {
-  closeModalWindow,
-  toOfferDraw,
-  runTime,
-  setGameOver,
-  clearOfferDraw,
-} from '../../store/chessSlice';
 import { useEffect } from 'react';
-import { SideColor } from '../../types/ChessTypes';
-import ModalWindow from '../ModalWindow';
-import Question from '../Question';
-import GameOverWindow from '../GameOverWindow';
+import styled from 'styled-components';
+
+import { useAppDispatch, useAppSelector } from '../../../../store/store';
+import { runTime } from '../../../store/timerSlice';
+import {
+  clearOfferDraw,
+  setGameOver,
+  toOfferDrawSend,
+} from '../../../store/statusSlice';
+import { openModalWindow } from '../../../store/uiSlice';
+import { SideColor } from '../../../types/StatusTypes';
+
+import useInterval from '../../../hooks/useInterval';
+
+import ChessBoard from '../board/ChessBoard';
+import GameOverWindow from '../../../modals/GameOverWindow';
+import Question from '../../../modals/Question';
+import Buttons from '../controls/Buttons';
+import Time from '../controls/Time';
+import ModalWindow from '../../../../components/ModalWindow';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-  const { isGameOver, time, side, isOpenModalWindow, offerDraw } =
-    useAppSelector(state => state.chess);
+  const time = useAppSelector(state => state.timer.time);
+  const isOpenModalWindow = useAppSelector(state => state.ui.isOpenModalWindow);
+  const { isGameOver, offerDraw, side } = useAppSelector(state => state.status);
 
   // Таймер гравців
   useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
@@ -30,9 +33,11 @@ function ChessEnviroment() {
   useEffect(() => {
     if (time.white === 0) {
       dispatch(setGameOver({ message: 'White time is over', type: 'win' }));
+      dispatch(openModalWindow('gameOver'));
     }
     if (time.black === 0) {
       dispatch(setGameOver({ message: 'Black time is over', type: 'win' }));
+      dispatch(openModalWindow('gameOver'));
     }
   }, [time.white, time.black, dispatch]);
 
@@ -40,23 +45,20 @@ function ChessEnviroment() {
   function handleSubmitSurrender() {
     const sideWord = side === 'w' ? 'White' : 'Black';
     dispatch(setGameOver({ message: `${sideWord} surrender`, type: 'win' }));
-  }
-
-  function handleCloseModal() {
-    dispatch(closeModalWindow());
+    dispatch(openModalWindow('gameOver'));
   }
 
   function handleSubmitOfferDrawSend() {
-    dispatch(toOfferDraw());
-    console.log(offerDraw.from, side);
+    dispatch(toOfferDrawSend());
+    dispatch(openModalWindow('offerDrawGet'));
   }
 
   function handleSubmitOfferDrawGet() {
     dispatch(setGameOver({ message: `Draw`, type: 'draw' }));
+    dispatch(openModalWindow('gameOver'));
   }
   function handleRejectOfferDrawGet() {
     dispatch(clearOfferDraw());
-    dispatch(closeModalWindow());
   }
 
   return (
@@ -66,15 +68,12 @@ function ChessEnviroment() {
       <Time type="w" />
       <Buttons />
       <ModalWindow isOpen={isOpenModalWindow === 'surrender'}>
-        <Question onSubmit={handleSubmitSurrender} onReject={handleCloseModal}>
+        <Question onSubmit={handleSubmitSurrender}>
           Are you sure you want to surrender?
         </Question>
       </ModalWindow>
       <ModalWindow isOpen={isOpenModalWindow === 'offerDrawSend'}>
-        <Question
-          onSubmit={handleSubmitOfferDrawSend}
-          onReject={handleCloseModal}
-        >
+        <Question onSubmit={handleSubmitOfferDrawSend}>
           Are you sure you want to offer the draw?
         </Question>
       </ModalWindow>
