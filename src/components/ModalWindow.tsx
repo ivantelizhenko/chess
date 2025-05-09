@@ -41,6 +41,7 @@ const Wrapper = styled.dialog`
     box-shadow: 0 0px 16px rgba(0, 0, 0, 0.5);
     background-color: var(--color-gray-100);
     place-self: center;
+    border-radius: 8px;
   }
 `;
 

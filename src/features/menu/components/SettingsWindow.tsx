@@ -12,14 +12,14 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
     const form = e.target;
     const data = new FormData(form as HTMLFormElement);
     const obj = Object.fromEntries(data);
-
+    console.log(obj);
     // Закрити модальне вікно
-    onClose();
+    // onClose();
   }
 
   return (
     <Wrapper onSubmit={handleSubmit}>
-      <ButtonClose onClick={onClose}>
+      <ButtonClose type="button" onClick={onClose}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -38,7 +38,7 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
       </ButtonClose>
       <Select options={MENU_SELECT_DATA.times} name="time" />
       <Select options={MENU_SELECT_DATA.sides} name="side" />
-      <Button>Create</Button>
+      <Button type="submit">Create</Button>
     </Wrapper>
   );
 }
