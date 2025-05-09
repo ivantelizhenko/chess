@@ -13,6 +13,7 @@ import { openModalWindow } from '../../../../store/uiSlice';
 import { doMove, showPrevMove, showTileColor } from '../../../../service/chess';
 import { transformObjectToSAN } from '../../../../utils/helpers';
 import { PieceType, TileType } from './TileTypes';
+import { addExtraSeconds } from '../../../../store/timerSlice';
 
 type TileColor = 'light' | 'dark';
 
@@ -64,6 +65,8 @@ function Tile({ column, row, piece }: TileType) {
           })
         );
       }
+
+      dispatch(addExtraSeconds(side));
     }
   }
 

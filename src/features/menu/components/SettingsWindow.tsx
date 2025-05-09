@@ -4,17 +4,27 @@ import styled from 'styled-components';
 import DefaultButton from '../../../components/DefaultButton';
 import Select from './Select';
 import { MENU_SELECT_DATA } from '../../utils/constants';
+import { useAppDispatch } from '../../../store/store';
+import { createId, setSide } from '../../store/statusSlice';
+import { setTime } from '../../store/timerSlice';
+import { SideColor } from '../../types/StatusTypes';
 
 function SettingsWindow({ onClose }: { onClose: () => void }) {
+  const dispatch = useAppDispatch();
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // 1) Отримати і обробити дані
     const form = e.target;
     const data = new FormData(form as HTMLFormElement);
-    const obj = Object.fromEntries(data);
-    console.log(obj);
+    const { time, side } = Object.fromEntries(data);
+
+    dispatch(setTime(time as string));
+    dispatch(setSide(side as SideColor));
+    dispatch(createId());
+
     // Закрити модальне вікно
-    // onClose();
+    onClose();
   }
 
   return (
@@ -36,8 +46,8 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
           <path d="m6 6 12 12" />
         </svg>
       </ButtonClose>
-      <Select options={MENU_SELECT_DATA.times} name="time" />
-      <Select options={MENU_SELECT_DATA.sides} name="side" />
+      <Select options={MENU_SELECT_DATA.times} name="time" required />
+      <Select options={MENU_SELECT_DATA.sides} name="side" required />
       <Button type="submit">Create</Button>
     </Wrapper>
   );

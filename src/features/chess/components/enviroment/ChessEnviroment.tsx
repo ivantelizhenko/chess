@@ -22,24 +22,29 @@ import ModalWindow from '../../../../components/ModalWindow';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-  const time = useAppSelector(state => state.timer.time);
+  const { time, isStartTimer } = useAppSelector(state => state.timer);
   const isOpenModalWindow = useAppSelector(state => state.ui.isOpenModalWindow);
   const { isGameOver, offerDraw, side } = useAppSelector(state => state.status);
 
   // Таймер гравців
-  useInterval(() => dispatch(runTime()), isGameOver.is ? null : 1000);
+  useInterval(
+    () => dispatch(runTime()),
+    isGameOver.is || !isStartTimer ? null : 1000
+  );
 
   // Слідкування за часом
   useEffect(() => {
-    if (time.white === 0) {
-      dispatch(setGameOver({ message: 'White time is over', type: 'win' }));
-      dispatch(openModalWindow('gameOver'));
+    if (isStartTimer) {
+      if (time.white <= 0) {
+        dispatch(setGameOver({ message: 'White time is over', type: 'win' }));
+        dispatch(openModalWindow('gameOver'));
+      }
+      if (time.black <= 0) {
+        dispatch(setGameOver({ message: 'Black time is over', type: 'win' }));
+        dispatch(openModalWindow('gameOver'));
+      }
     }
-    if (time.black === 0) {
-      dispatch(setGameOver({ message: 'Black time is over', type: 'win' }));
-      dispatch(openModalWindow('gameOver'));
-    }
-  }, [time.white, time.black, dispatch]);
+  }, [time.white, time.black, dispatch, isStartTimer]);
 
   // Функції модальних вікон(5)
   function handleSubmitSurrender() {
@@ -62,7 +67,7 @@ function ChessEnviroment() {
   }
 
   return (
-    <Wrapper $side={side}>
+    <Wrapper $side={side!}>
       <Time type="b" />
       <ChessBoard />
       <Time type="w" />

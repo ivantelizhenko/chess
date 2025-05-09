@@ -1,14 +1,13 @@
+import { SelectHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-function Select({
-  options,
-  name,
-}: {
+type SelectProps = {
   options: { title: string; value: string; id: string }[];
-  name: string;
-}) {
+} & SelectHTMLAttributes<HTMLSelectElement>;
+
+function Select({ options, ...delegated }: SelectProps) {
   return (
-    <StyledSelect name={name}>
+    <StyledSelect {...delegated}>
       {options.map(({ title, value, id }) => (
         <option key={id} value={value}>
           {title}

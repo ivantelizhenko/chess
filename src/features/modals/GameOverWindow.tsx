@@ -2,8 +2,10 @@ import styled from 'styled-components';
 
 import { useAppSelector } from '../../store/store';
 import DefaultButton from '../../components/DefaultButton';
+import { useNavigate } from 'react-router-dom';
 
 function GameOverWindow() {
+  const navigate = useNavigate();
   const turn = useAppSelector(state => state.timer.turn);
   const { message, type } = useAppSelector(state => state.status.isGameOver);
   const sideWin = turn === 'w' ? 'Black' : 'White';
@@ -11,7 +13,9 @@ function GameOverWindow() {
   const messageWin = `${sideWin} win. ${message}.`;
   const messageDraw = `${message}.`;
 
-  function handleBackToMainMenu() {}
+  function handleBackToMainMenu() {
+    navigate('menu');
+  }
 
   return (
     <Wrapper>

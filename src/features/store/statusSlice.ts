@@ -1,10 +1,11 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import { GameOverType, SideColor, StateType } from '../types/StatusTypes';
 
 const initialState: StateType = {
   isGameOver: { is: false, message: '', type: null },
   offerDraw: { from: null },
-  side: 'w',
+  side: null,
+  id: null,
 };
 
 const statusSlice = createSlice({
@@ -35,15 +36,21 @@ const statusSlice = createSlice({
     clearOfferDraw(state) {
       state.offerDraw.from = null;
     },
-
-    //temporary
+    createId(state) {
+      state.id = nanoid();
+    },
     setSide(state, action: PayloadAction<SideColor>) {
       state.side = action.payload;
     },
   },
 });
 
-export const { setGameOver, toOfferDrawSend, clearOfferDraw, setSide } =
-  statusSlice.actions;
+export const {
+  setGameOver,
+  toOfferDrawSend,
+  clearOfferDraw,
+  setSide,
+  createId,
+} = statusSlice.actions;
 
 export default statusSlice.reducer;
