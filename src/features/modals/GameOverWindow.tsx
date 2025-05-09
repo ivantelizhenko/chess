@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 
-import { useAppSelector } from '../../store/store';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import DefaultButton from '../../components/DefaultButton';
 import { useNavigate } from 'react-router-dom';
+import { deleteId } from '../store/statusSlice';
+import { closeModalWindow } from '../store/uiSlice';
 
 function GameOverWindow() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const turn = useAppSelector(state => state.timer.turn);
   const { message, type } = useAppSelector(state => state.status.isGameOver);
@@ -15,6 +18,8 @@ function GameOverWindow() {
 
   function handleBackToMainMenu() {
     navigate('menu');
+    dispatch(deleteId());
+    dispatch(closeModalWindow());
   }
 
   return (
