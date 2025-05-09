@@ -3,6 +3,8 @@ import ChessEnviroment from '../features/chess/components/enviroment/ChessEnviro
 import Menu from '../features/menu/components/Menu';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
+import '../features/service/supabaseService';
+
 function App() {
   return (
     <Wrapper>
