@@ -25,6 +25,7 @@ function Tile({ column, row, piece }: TileType) {
   const { selectedTile, possibleMovesForPiece, prevTwoMoves } = useAppSelector(
     state => state.board
   );
+  const isStartTimer = useAppSelector(state => state.timer.isStartTimer);
 
   const attackedTile = { column, row };
   const attackedTileString = column + row;
@@ -33,6 +34,7 @@ function Tile({ column, row, piece }: TileType) {
     .includes(attackedTileString);
 
   function handleMove() {
+    // if (selectedTile && isPossibleMove && side === selectedTile?.piece.color && isStartTimer) {
     if (selectedTile && isPossibleMove && side === selectedTile?.piece.color) {
       // 1. Зробити крок в chess.js
       const moveType = doMove(

@@ -39,8 +39,8 @@ const statusSlice = createSlice({
     createId(state) {
       state.id = nanoid();
     },
-    deleteId(state) {
-      state.id = null;
+    reset() {
+      return initialState;
     },
     setSide(state, action: PayloadAction<SideColor>) {
       state.side = action.payload;
@@ -53,8 +53,8 @@ export const {
   toOfferDrawSend,
   clearOfferDraw,
   createId,
-  deleteId,
   setSide,
+  reset,
 } = statusSlice.actions;
 
 export default statusSlice.reducer;

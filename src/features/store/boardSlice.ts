@@ -145,6 +145,9 @@ const boardSlice = createSlice({
     setPrevTwoMoves(state, action: PayloadAction<PrevMoveObject[]>) {
       state.prevTwoMoves = action.payload;
     },
+    reset() {
+      return initialState;
+    },
   },
 });
 
@@ -157,6 +160,7 @@ export const {
   setPossibleMovesForPiece,
   clearPossibleMoves,
   setPrevTwoMoves,
+  reset,
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

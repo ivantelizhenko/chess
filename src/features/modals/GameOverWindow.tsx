@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import DefaultButton from '../../components/DefaultButton';
 import { useNavigate } from 'react-router-dom';
-import { deleteId } from '../store/statusSlice';
+import { reset as resetStatus } from '../store/statusSlice';
+import { reset as resetBoard } from '../store/boardSlice';
+import { reset as resetTimer } from '../store/timerSlice';
+import { reset as resetChess } from '../service/chess';
 import { closeModalWindow } from '../store/uiSlice';
 
 function GameOverWindow() {
@@ -18,7 +21,10 @@ function GameOverWindow() {
 
   function handleBackToMainMenu() {
     navigate('menu');
-    dispatch(deleteId());
+    resetChess();
+    dispatch(resetStatus());
+    dispatch(resetBoard());
+    dispatch(resetTimer());
     dispatch(closeModalWindow());
   }
 

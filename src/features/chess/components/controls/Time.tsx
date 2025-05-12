@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../../store/store';
 
 import { convertTime } from '../../../utils/helpers';
 import { setSide } from '../../../store/statusSlice';
+import { startTimer } from '../../../store/timerSlice';
 
 const times = {
   w: {
@@ -28,6 +29,7 @@ function Time({ type }: { type: 'w' | 'b' }) {
   const dispatch = useAppDispatch();
   function handleSetSide() {
     dispatch(setSide(type));
+    dispatch(startTimer());
   }
 
   return (

@@ -40,10 +40,19 @@ const timerSlice = createSlice({
     startTimer(state) {
       state.isStartTimer = true;
     },
+    reset() {
+      return initialState;
+    },
   },
 });
 
-export const { runTime, setCurrentTurn, setTime, addExtraSeconds } =
-  timerSlice.actions;
+export const {
+  runTime,
+  setCurrentTurn,
+  setTime,
+  addExtraSeconds,
+  startTimer,
+  reset,
+} = timerSlice.actions;
 
 export default timerSlice.reducer;

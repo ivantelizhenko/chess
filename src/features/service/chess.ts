@@ -107,3 +107,7 @@ export function isGameOver() {
 
   return found ? { message: found[1], type: found[2] } : null;
 }
+
+export function reset() {
+  chess.reset();
+}
