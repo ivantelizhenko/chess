@@ -14,13 +14,16 @@ const timerSlice = createSlice({
   name: 'timer',
   initialState,
   reducers: {
-    setTime(state, action: PayloadAction<string>) {
-      const [minutes, extraSeconds] = action.payload
-        .split(' + ')
-        .map(string => +string);
+    setTime(
+      state,
+      action: PayloadAction<{ minutes: number; extraSeconds: number }>
+    ) {
+      state.extraSeconds = action.payload.extraSeconds;
 
-      state.extraSeconds = extraSeconds;
-      state.time = { white: minutes * 60, black: minutes * 60 };
+      state.time = {
+        white: action.payload.minutes * 60,
+        black: action.payload.minutes * 60,
+      };
     },
     addExtraSeconds(state, action: PayloadAction<SideColor>) {
       const side = action.payload === 'w' ? 'white' : 'black';

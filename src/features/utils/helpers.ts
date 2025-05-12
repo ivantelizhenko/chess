@@ -84,7 +84,7 @@ export function transformObjectToSAN(data: TileWithPieceType) {
   return codeWithPiece;
 }
 
-export function convertTime(seconds: number) {
+export function convertTimeFromSecondsToTimeCode(seconds: number) {
   if (seconds < 0) return '00:00';
 
   const minutes = Math.floor(seconds / 60);
@@ -94,4 +94,10 @@ export function convertTime(seconds: number) {
   const sStr = String(secs).padStart(2, '0');
 
   return `${mStr}:${sStr}`;
+}
+
+export function convertGameTimeToMinutesAndExtraSeconds(time: string) {
+  const [minutes, extraSeconds] = time.split(' + ').map(string => +string);
+
+  return [minutes, extraSeconds];
 }

@@ -5,23 +5,52 @@ import DefaultButton from '../../../components/DefaultButton';
 import Select from './Select';
 import { MENU_SELECT_DATA } from '../../utils/constants';
 import { useAppDispatch } from '../../../store/store';
-import { createId, setSide } from '../../store/statusSlice';
+import { addId, setSide } from '../../store/statusSlice';
 import { setTime } from '../../store/timerSlice';
 import { SideColor } from '../../types/StatusTypes';
+import useCreateGame from '../../hooks/useCreateGame';
+import { nanoid } from '@reduxjs/toolkit';
+import {
+  convertGameTimeToMinutesAndExtraSeconds,
+  createBoard,
+} from '../../utils/helpers';
 
 function SettingsWindow({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
+  const { createGame } = useCreateGame();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // 1) Отримати і обробити дані
+    // 1) Отримати і обробити дані з форми
     const form = e.target;
     const data = new FormData(form as HTMLFormElement);
     const { time, side } = Object.fromEntries(data);
 
-    dispatch(setTime(time as string));
+    // 2) Інші необзідні дані
+    const gameId = nanoid();
+    const userId = nanoid();
+    const board = createBoard();
+
+    const [minutes, extraSeconds] = convertGameTimeToMinutesAndExtraSeconds(
+      time as string
+    );
+
+    dispatch(setTime({ minutes, extraSeconds }));
     dispatch(setSide(side as SideColor));
-    dispatch(createId());
+    dispatch(addId(gameId));
+
+    // 2) Додати гру на сервер на сервері
+    // { gameId, userId, side, board, time, extraSeconds,}
+    createGame({
+      gameId,
+      userId,
+      side: side as SideColor,
+      board,
+      time: minutes,
+      extraSeconds,
+    });
+
+    localStorage.setItem('chess/userId', userId);
 
     // Закрити модальне вікно
     onClose();

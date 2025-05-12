@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/store';
 
-import { convertTime } from '../../../utils/helpers';
+import { convertTimeFromSecondsToTimeCode } from '../../../utils/helpers';
 import { setSide } from '../../../store/statusSlice';
 import { startTimer } from '../../../store/timerSlice';
 
@@ -21,7 +21,7 @@ const times = {
 
 function Time({ type }: { type: 'w' | 'b' }) {
   const { white, black } = useAppSelector(state => state.timer.time);
-  const time = convertTime(type === 'w' ? white : black);
+  const time = convertTimeFromSecondsToTimeCode(type === 'w' ? white : black);
 
   const style = times[type];
 
