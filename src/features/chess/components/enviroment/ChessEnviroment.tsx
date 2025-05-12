@@ -2,10 +2,13 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/store';
-import { runTime } from '../../../store/timerSlice';
+import { runTime, setTime } from '../../../store/timerSlice';
 import {
+  addGameId,
+  addUserId,
   clearOfferDraw,
   setGameOver,
+  setSide,
   toOfferDrawSend,
 } from '../../../store/statusSlice';
 import { openModalWindow } from '../../../store/uiSlice';
@@ -19,12 +22,64 @@ import Question from '../../../modals/Question';
 import Buttons from '../controls/Buttons';
 import Time from '../controls/Time';
 import ModalWindow from '../../../../components/ModalWindow';
+import useGetGame from '../../../hooks/useGetGame';
+import { setBoard } from '../../../store/boardSlice';
+import Spinner from '../../../../components/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  const { isGameOver, offerDraw, side, gameId } = useAppSelector(
+    state => state.status
+  );
   const { time, isStartTimer } = useAppSelector(state => state.timer);
   const isOpenModalWindow = useAppSelector(state => state.ui.isOpenModalWindow);
-  const { isGameOver, offerDraw, side } = useAppSelector(state => state.status);
+  const { data: newGame, isLoading } = useGetGame();
+
+  // Встановлення гри
+  // Взяття gameId з localStorage, якщо воно там є. Але працює тільки при перезавантажені сторінки.
+  useEffect(() => {
+    if (!gameId) {
+      const gameIdLS = localStorage.getItem('chess/gameId');
+      const userIdLS = localStorage.getItem('chess/userId');
+
+      if (gameIdLS && userIdLS) {
+        dispatch(addGameId(gameIdLS));
+        dispatch(addUserId(userIdLS));
+      }
+
+      if (!gameIdLS) {
+        console.log('i navigate to menu 1');
+        navigate('/menu');
+      }
+    }
+  }, [dispatch, gameId, navigate]);
+
+  // Якщо немає id, то перенаправлення на сторінку меню
+  useEffect(() => {
+    if (gameId) {
+      navigate(`/chess/${gameId}`);
+    } else navigate('/menu');
+  }, [navigate, gameId]);
+
+  // Якщо є gameId і гра за цим id, то беруться дані з сервера
+  useEffect(() => {
+    if (newGame && newGame.length === 1) {
+      const { sideWhite, time, extraSeconds, board } = newGame[0];
+      const sideAPI = sideWhite ? 'w' : 'b';
+
+      dispatch(setTime({ minutes: time, extraSeconds }));
+      dispatch(setSide(sideAPI as SideColor));
+      dispatch(setBoard(board));
+    }
+    if (newGame && newGame.length === 0) {
+      console.log('i clear all');
+      localStorage.clear();
+    }
+  }, [isLoading, dispatch, newGame, navigate]);
 
   // Таймер гравців
   useInterval(
@@ -65,6 +120,8 @@ function ChessEnviroment() {
   function handleRejectOfferDrawGet() {
     dispatch(clearOfferDraw());
   }
+
+  if (isLoading) return <Spinner />;
 
   return (
     <Wrapper $side={side!}>

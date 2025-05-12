@@ -64,7 +64,7 @@ function ChessBoard() {
 
   return (
     <Wrapper>
-      {board.map(delegated => (
+      {board?.map(delegated => (
         <Tile key={delegated.column + delegated.row} {...delegated} />
       ))}
 

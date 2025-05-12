@@ -4,22 +4,22 @@ import styled from 'styled-components';
 import DefaultButton from '../../../components/DefaultButton';
 import ModalWindow from '../../../components/ModalWindow';
 import SettingsWindow from './SettingsWindow';
-import { useAppSelector } from '../../../store/store';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../../store/store';
 
 function Menu() {
-  const navigate = useNavigate();
-  const id = useAppSelector(state => state.status.id);
-
   const [openModal, setOpenModal] = useState<boolean>(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+  const navigate = useNavigate();
+  const gameId = useAppSelector(state => state.status.gameId);
+
   useEffect(() => {
-    if (id) {
-      navigate(`/chess/${id}`);
+    if (gameId) {
+      navigate(`/chess/${gameId}`);
     }
-  }, [navigate, id]);
+  }, [navigate, gameId]);
 
   return (
     <Wrapper>

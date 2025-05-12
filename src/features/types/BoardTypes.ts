@@ -5,7 +5,7 @@ import {
 } from '../chess/components/board/Tile/TileTypes';
 
 export type StateType = {
-  board: BoardType;
+  board: BoardType | null;
   selectedTile: TileWithPieceType | null;
   possibleMovesForPiece: PossibleMoveData[];
   prevTwoMoves: PrevMoveObject[];

@@ -5,8 +5,7 @@ import DefaultButton from '../../../components/DefaultButton';
 import Select from './Select';
 import { MENU_SELECT_DATA } from '../../utils/constants';
 import { useAppDispatch } from '../../../store/store';
-import { addId, setSide } from '../../store/statusSlice';
-import { setTime } from '../../store/timerSlice';
+import { addGameId, addUserId } from '../../store/statusSlice';
 import { SideColor } from '../../types/StatusTypes';
 import useCreateGame from '../../hooks/useCreateGame';
 import { nanoid } from '@reduxjs/toolkit';
@@ -26,7 +25,7 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
     const data = new FormData(form as HTMLFormElement);
     const { time, side } = Object.fromEntries(data);
 
-    // 2) Інші необзідні дані
+    // 2) Інші необхідні дані
     const gameId = nanoid();
     const userId = nanoid();
     const board = createBoard();
@@ -35,12 +34,10 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
       time as string
     );
 
-    dispatch(setTime({ minutes, extraSeconds }));
-    dispatch(setSide(side as SideColor));
-    dispatch(addId(gameId));
+    dispatch(addGameId(gameId));
+    dispatch(addUserId(userId));
 
     // 2) Додати гру на сервер на сервері
-    // { gameId, userId, side, board, time, extraSeconds,}
     createGame({
       gameId,
       userId,
@@ -51,6 +48,7 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
     });
 
     localStorage.setItem('chess/userId', userId);
+    localStorage.setItem('chess/gameId', gameId);
 
     // Закрити модальне вікно
     onClose();

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createBoard } from '../utils/helpers';
 import {
+  BoardType,
   PossibleMoveData,
   PrevMoveObject,
   StateType,
@@ -14,7 +14,7 @@ import {
 } from '../chess/components/board/Tile/TileTypes';
 
 const initialState: StateType = {
-  board: createBoard(),
+  board: null,
   selectedTile: null,
   possibleMovesForPiece: [],
   prevTwoMoves: [],
@@ -25,6 +25,9 @@ const boardSlice = createSlice({
   name: 'chess',
   initialState,
   reducers: {
+    setBoard(state, action: PayloadAction<BoardType>) {
+      state.board! = action.payload;
+    },
     movePiece(
       state,
       action: PayloadAction<{
@@ -35,7 +38,7 @@ const boardSlice = createSlice({
       const { selectedTile, attackedTile } = action.payload;
 
       // Ставимо фігуру на нову клітинку
-      state.board.find(
+      state.board!.find(
         tile =>
           tile.column === attackedTile.column && tile.row === attackedTile.row
       )!.piece = {
@@ -44,7 +47,7 @@ const boardSlice = createSlice({
       };
 
       // Видаляємо фігуру з її минулої клітинки
-      state.board.find(
+      state.board!.find(
         tile =>
           tile.column === selectedTile.column && tile.row === selectedTile.row
       )!.piece = null;
@@ -63,7 +66,7 @@ const boardSlice = createSlice({
           (isBlackEnPassant && isPawnFirstTwoTileMove === 2)
         ) {
           const [column, row] = prevMove.to.split('');
-          state.board.find(
+          state.board!.find(
             tile => tile.column === column && tile.row === row
           )!.piece = null;
         }
@@ -77,25 +80,26 @@ const boardSlice = createSlice({
       const row = action.payload.color === 'w' ? '1' : '8';
 
       // Перемістити короля
-      state.board.find(
+      state.board!.find(
         tile => tile.column === (isOO ? 'g' : 'c') && tile.row === row
       )!.piece = {
         name: 'k',
         color: action.payload.color,
       };
 
-      state.board.find(tile => tile.column === 'e' && tile.row === row)!.piece =
-        null;
+      state.board!.find(
+        tile => tile.column === 'e' && tile.row === row
+      )!.piece = null;
 
       // Перемістити туру
-      state.board.find(
+      state.board!.find(
         tile => tile.column === (isOO ? 'f' : 'd') && tile.row === row
       )!.piece = {
         name: 'r',
         color: action.payload.color,
       };
 
-      state.board.find(
+      state.board!.find(
         tile => tile.column === (isOO ? 'h' : 'a') && tile.row === row
       )!.piece = null;
     },
@@ -111,7 +115,7 @@ const boardSlice = createSlice({
       const [columnTo, rowTo] = state.prevTwoMoves.at(-1)!.to;
 
       // Ставимо фігуру на нову клітинку
-      state.board.find(
+      state.board!.find(
         tile => tile.column === columnTo && tile.row === rowTo
       )!.piece = {
         name: promotedPiece.name as PieceFigures,
@@ -119,7 +123,7 @@ const boardSlice = createSlice({
       };
 
       // Видаляємо фігуру з її минулої клітинки
-      state.board.find(
+      state.board!.find(
         tile => tile.column === columnFrom && tile.row === rowFrom
       )!.piece = null;
 
@@ -152,6 +156,7 @@ const boardSlice = createSlice({
 });
 
 export const {
+  setBoard,
   movePiece,
   doCastling,
   doPromotion,

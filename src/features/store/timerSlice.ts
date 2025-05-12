@@ -19,7 +19,6 @@ const timerSlice = createSlice({
       action: PayloadAction<{ minutes: number; extraSeconds: number }>
     ) {
       state.extraSeconds = action.payload.extraSeconds;
-
       state.time = {
         white: action.payload.minutes * 60,
         black: action.payload.minutes * 60,

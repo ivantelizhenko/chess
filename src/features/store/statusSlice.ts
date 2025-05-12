@@ -5,7 +5,8 @@ const initialState: StateType = {
   isGameOver: { is: false, message: '', type: null },
   offerDraw: { from: null },
   side: null,
-  id: null,
+  gameId: null,
+  userId: null,
 };
 
 const statusSlice = createSlice({
@@ -36,8 +37,11 @@ const statusSlice = createSlice({
     clearOfferDraw(state) {
       state.offerDraw.from = null;
     },
-    addId(state, action: PayloadAction<string>) {
-      state.id = action.payload;
+    addGameId(state, action: PayloadAction<string>) {
+      state.gameId = action.payload;
+    },
+    addUserId(state, action: PayloadAction<string>) {
+      state.userId = action.payload;
     },
     reset() {
       return initialState;
@@ -52,7 +56,8 @@ export const {
   setGameOver,
   toOfferDrawSend,
   clearOfferDraw,
-  addId,
+  addGameId,
+  addUserId,
   setSide,
   reset,
 } = statusSlice.actions;

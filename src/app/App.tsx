@@ -10,7 +10,6 @@ function App() {
     <Wrapper>
       <BrowserRouter>
         <Routes>
-          <Route index element={<Menu />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/chess/:id" element={<ChessEnviroment />} />
           <Route path="*" element={<Navigate replace to="/menu" />} />
