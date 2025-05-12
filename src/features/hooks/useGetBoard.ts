@@ -3,7 +3,7 @@ import { getBoard as getBoardAPI } from '../service/supabaseService';
 import { useAppSelector } from '../../store/store';
 
 function useGetBoard() {
-  const gameId = useAppSelector(state => state.status.id);
+  const gameId = useAppSelector(state => state.status.gameId);
 
   return useQuery({
     queryKey: ['game', gameId],

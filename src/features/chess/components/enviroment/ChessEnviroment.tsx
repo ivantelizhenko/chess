@@ -1,8 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/store';
-import { runTime, setTime } from '../../../store/timerSlice';
+import {
+  runTime,
+  setActiveTime,
+  setExtraSeconds,
+} from '../../../store/timerSlice';
 import {
   addGameId,
   addUserId,
@@ -26,6 +30,8 @@ import useGetGame from '../../../hooks/useGetGame';
 import { setBoard } from '../../../store/boardSlice';
 import Spinner from '../../../../components/Spinner';
 import { useNavigate } from 'react-router-dom';
+import useRealtimeGameById from '../../../hooks/useRealtimeGameById';
+import useUpdateTime from '../../../hooks/useUpdateTime';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
@@ -38,6 +44,9 @@ function ChessEnviroment() {
   const { time, isStartTimer } = useAppSelector(state => state.timer);
   const isOpenModalWindow = useAppSelector(state => state.ui.isOpenModalWindow);
   const { data: newGame, isLoading } = useGetGame();
+  const { updateTime } = useUpdateTime();
+
+  useRealtimeGameById();
 
   // Встановлення гри
   // Взяття gameId з localStorage, якщо воно там є. Але працює тільки при перезавантажені сторінки.
@@ -52,7 +61,6 @@ function ChessEnviroment() {
       }
 
       if (!gameIdLS) {
-        console.log('i navigate to menu 1');
         navigate('/menu');
       }
     }
@@ -66,26 +74,34 @@ function ChessEnviroment() {
   }, [navigate, gameId]);
 
   // Якщо є gameId і гра за цим id, то беруться дані з сервера
+  const onlyOneTime = useRef<boolean>(false);
   useEffect(() => {
-    if (newGame && newGame.length === 1) {
-      const { sideWhite, time, extraSeconds, board } = newGame[0];
-      const sideAPI = sideWhite ? 'w' : 'b';
+    if (!onlyOneTime.current) {
+      if (newGame && newGame.length === 1) {
+        console.log('unfortunately i work', onlyOneTime.current);
+        const { sideWhite, extraSeconds, board, timeWhite, timeBlack } =
+          newGame[0];
+        const sideAPI = sideWhite ? 'w' : 'b';
+        dispatch(setActiveTime({ timeWhite, timeBlack }));
+        dispatch(setExtraSeconds(extraSeconds));
+        dispatch(setSide(sideAPI as SideColor));
+        dispatch(setBoard(board));
 
-      dispatch(setTime({ minutes: time, extraSeconds }));
-      dispatch(setSide(sideAPI as SideColor));
-      dispatch(setBoard(board));
-    }
-    if (newGame && newGame.length === 0) {
-      console.log('i clear all');
-      localStorage.clear();
+        onlyOneTime.current = true;
+      }
+      if (newGame && newGame.length === 0) {
+        localStorage.clear();
+      }
     }
   }, [isLoading, dispatch, newGame, navigate]);
 
   // Таймер гравців
-  useInterval(
-    () => dispatch(runTime()),
-    isGameOver.is || !isStartTimer ? null : 1000
-  );
+  function handleRunTime() {
+    dispatch(runTime());
+    updateTime();
+  }
+
+  useInterval(handleRunTime, !isStartTimer || isGameOver.is ? null : 1000);
 
   // Слідкування за часом
   useEffect(() => {

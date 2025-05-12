@@ -4,12 +4,12 @@ import { useAppSelector } from '../../store/store';
 
 function useUpdateBoard() {
   const { board, prevTwoMoves } = useAppSelector(state => state.board);
-  const gameId = useAppSelector(state => state.status.id)!;
+  const gameId = useAppSelector(state => state.status.gameId)!;
   const lastMove = prevTwoMoves.at(-1)!;
   const queryClient = useQueryClient();
 
   const { mutateAsync: updateBoard } = useMutation({
-    mutationFn: () => updateBoardAPI(lastMove, board, gameId),
+    mutationFn: () => updateBoardAPI(lastMove, board!, gameId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['game'] });
     },

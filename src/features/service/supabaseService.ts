@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { BoardType, PrevMoveObject } from '../types/BoardTypes';
+import { SideColor } from '../types/StatusTypes';
 import { NewGameType } from '../types/SupabaseServicesTypes';
 
 export async function createGame({
@@ -20,6 +21,8 @@ export async function createGame({
     board: boardJSON,
     time,
     extraSeconds,
+    timeWhite: time * 60,
+    timeBlack: time * 60,
   };
 
   await supabase.from('games').insert([newGame]);
@@ -56,6 +59,20 @@ export async function updateBoard(
     .from('games')
     .update({ lastMove, board: boardJSON, turn: newTurn })
     .eq('id', gameId);
+}
+
+export async function updateTime(turn: SideColor, gameId: string) {
+  const { data } = await supabase
+    .from('games')
+    .select('timeWhite, timeBlack')
+    .eq('id', gameId);
+
+  const currentSide =
+    turn === 'w'
+      ? { timeWhite: data![0].timeWhite - 1 }
+      : { timeBlack: data![0].timeBlack - 1 };
+
+  await supabase.from('games').update(currentSide).eq('id', gameId);
 }
 
 export async function getBoard(id: string) {

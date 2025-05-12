@@ -3,7 +3,7 @@ import { deleteGame as deleteGameAPI } from '../service/supabaseService';
 import { useAppSelector } from '../../store/store';
 
 function useDeleteGame() {
-  const gameId = useAppSelector(state => state.status.id);
+  const gameId = useAppSelector(state => state.status.gameId);
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteGame } = useMutation({

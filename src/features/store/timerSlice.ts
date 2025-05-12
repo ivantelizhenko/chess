@@ -14,15 +14,8 @@ const timerSlice = createSlice({
   name: 'timer',
   initialState,
   reducers: {
-    setTime(
-      state,
-      action: PayloadAction<{ minutes: number; extraSeconds: number }>
-    ) {
-      state.extraSeconds = action.payload.extraSeconds;
-      state.time = {
-        white: action.payload.minutes * 60,
-        black: action.payload.minutes * 60,
-      };
+    setExtraSeconds(state, action: PayloadAction<number>) {
+      state.extraSeconds = action.payload;
     },
     addExtraSeconds(state, action: PayloadAction<SideColor>) {
       const side = action.payload === 'w' ? 'white' : 'black';
@@ -42,6 +35,15 @@ const timerSlice = createSlice({
     startTimer(state) {
       state.isStartTimer = true;
     },
+    setActiveTime(
+      state,
+      action: PayloadAction<{ timeWhite: number; timeBlack: number }>
+    ) {
+      state.time = {
+        white: action.payload.timeWhite,
+        black: action.payload.timeBlack,
+      };
+    },
     reset() {
       return initialState;
     },
@@ -51,9 +53,10 @@ const timerSlice = createSlice({
 export const {
   runTime,
   setCurrentTurn,
-  setTime,
+  setExtraSeconds,
   addExtraSeconds,
   startTimer,
+  setActiveTime,
   reset,
 } = timerSlice.actions;
 

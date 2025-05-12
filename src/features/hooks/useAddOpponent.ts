@@ -4,7 +4,7 @@ import { useAppSelector } from '../../store/store';
 
 function useAddOpponent() {
   const queryClient = useQueryClient();
-  const gameId = useAppSelector(state => state.status.id);
+  const gameId = useAppSelector(state => state.status.gameId);
 
   const { mutateAsync: addOpponent } = useMutation<
     void,
