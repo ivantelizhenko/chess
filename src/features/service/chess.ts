@@ -42,14 +42,14 @@ export function showPrevMove() {
 
     const prevTwoMoves = [
       {
-        from: firstPrevMove.from,
-        to: firstPrevMove.to,
-        piece: firstPrevMove.piece,
-      },
-      {
         from: secondPrevMove.from,
         to: secondPrevMove.to,
         piece: secondPrevMove.piece,
+      },
+      {
+        from: firstPrevMove.from,
+        to: firstPrevMove.to,
+        piece: firstPrevMove.piece,
       },
     ];
     return prevTwoMoves;

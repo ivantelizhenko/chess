@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../../../../store/store';
 import Piece from '../../pieces/Piece';
 import {
+  clearPossibleMoves,
   doCastling,
   movePiece,
   setPrevTwoMoves,
@@ -72,6 +73,7 @@ function Tile({ column, row, piece }: TileType) {
 
   function handleSetSelectedTile() {
     if (piece?.name && piece.color) {
+      dispatch(clearPossibleMoves());
       dispatch(setSelectedTile({ column, row, piece }));
     }
   }
@@ -126,8 +128,8 @@ function Tile({ column, row, piece }: TileType) {
       $light={tileColor}
       $isSelected={selectedTile?.column === column && selectedTile?.row === row}
       $isPrevMove={
-        prevTwoMoves.at(0)?.from === column + row ||
-        prevTwoMoves.at(0)?.to === column + row
+        prevTwoMoves.at(-1)?.from === column + row ||
+        prevTwoMoves.at(-1)?.to === column + row
       }
       $possibleMove={isPossibleMove}
     >

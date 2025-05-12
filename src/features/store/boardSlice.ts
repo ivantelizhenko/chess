@@ -50,7 +50,7 @@ const boardSlice = createSlice({
       )!.piece = null;
 
       // En passant
-      const prevMove = state.prevTwoMoves.at(1)!;
+      const prevMove = state.prevTwoMoves.at(0)!;
       const isWhiteEnPassant =
         selectedTile.piece.color === 'w' && selectedTile.row === '5';
       const isBlackEnPassant =
@@ -107,8 +107,8 @@ const boardSlice = createSlice({
       }>
     ) {
       const promotedPiece = action.payload;
-      const [columnFrom, rowFrom] = state.prevTwoMoves.at(0)!.from;
-      const [columnTo, rowTo] = state.prevTwoMoves.at(0)!.to;
+      const [columnFrom, rowFrom] = state.prevTwoMoves.at(-1)!.from;
+      const [columnTo, rowTo] = state.prevTwoMoves.at(-1)!.to;
 
       // Ставимо фігуру на нову клітинку
       state.board.find(

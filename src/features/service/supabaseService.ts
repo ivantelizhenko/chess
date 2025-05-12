@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase';
-import { BoardType } from '../types/BoardTypes';
+import { BoardType, PrevMoveObject } from '../types/BoardTypes';
 import { NewGameType } from '../types/SupabaseServicesTypes';
 
 export async function createGame({
@@ -44,7 +44,7 @@ export async function addOpponent(gameId: string, userId: string) {
 }
 
 export async function updateBoard(
-  lastMove: string,
+  lastMove: PrevMoveObject,
   board: BoardType,
   gameId: string
 ) {
