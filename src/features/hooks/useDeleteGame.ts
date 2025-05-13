@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteGame as deleteGameAPI } from '../service/supabaseService';
-import { useAppSelector } from '../../store/store';
 
 function useDeleteGame() {
-  const gameId = useAppSelector(state => state.status.gameId);
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteGame } = useMutation({
-    mutationFn: () => deleteGameAPI(gameId!),
+    mutationFn: (gameId: string) => deleteGameAPI(gameId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['game'] });
     },

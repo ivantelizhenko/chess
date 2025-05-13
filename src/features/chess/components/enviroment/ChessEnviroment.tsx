@@ -96,7 +96,7 @@ function ChessEnviroment() {
     dispatch(runTime());
     updateTime();
   }
-  useInterval(handleRunTime, isGameOver.is && !isStartTimer ? null : 1000);
+  useInterval(handleRunTime, isGameOver.is || !isStartTimer ? null : 1000);
 
   // Слідкування за часом
   useEffect(() => {

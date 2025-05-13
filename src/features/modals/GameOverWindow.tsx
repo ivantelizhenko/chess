@@ -8,18 +8,24 @@ import { closeModalWindow } from '../store/uiSlice';
 import { reset as resetChess } from '../service/chess';
 import { clearIDsFromLocalStorage } from '../utils/helpers';
 import DefaultButton from '../../components/DefaultButton';
+import useDeleteGame from '../hooks/useDeleteGame';
 
 function GameOverWindow() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { deleteGame } = useDeleteGame();
   const turn = useAppSelector(state => state.timer.turn);
-  const { message, type } = useAppSelector(state => state.status.isGameOver);
+  const {
+    isGameOver: { message, type },
+    gameId,
+  } = useAppSelector(state => state.status);
 
   const sideWin = turn === 'w' ? 'Black' : 'White';
   const messageWin = `${sideWin} win. ${message}.`;
   const messageDraw = `${message}.`;
 
   function handleBackToMainMenu() {
+    deleteGame(gameId!);
     navigate('menu');
     resetChess();
     dispatch(resetStatus());

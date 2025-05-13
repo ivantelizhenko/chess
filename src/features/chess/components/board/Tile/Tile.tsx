@@ -34,7 +34,10 @@ function Tile({ column, row, piece }: TileType) {
     .includes(attackedTileString);
 
   function handleMove() {
+    // True
     // if (selectedTile && isPossibleMove && side === selectedTile?.piece.color && isStartTimer) {
+
+    // Temporary
     if (selectedTile && isPossibleMove && side === selectedTile?.piece.color) {
       // 1. Зробити крок в chess.js
       const moveType = doMove(
