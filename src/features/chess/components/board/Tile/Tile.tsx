@@ -25,7 +25,8 @@ function Tile({ column, row, piece }: TileType) {
   const { selectedTile, possibleMovesForPiece, prevTwoMoves } = useAppSelector(
     state => state.board
   );
-  const isStartTimer = useAppSelector(state => state.timer.isStartTimer);
+  // temporary commented
+  // const isStartTimer = useAppSelector(state => state.timer.isStartTimer);
 
   const attackedTile = { column, row };
   const attackedTileString = column + row;
