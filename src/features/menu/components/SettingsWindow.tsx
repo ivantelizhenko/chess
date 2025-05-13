@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { nanoid } from '@reduxjs/toolkit';
 import { SideColor } from '../../types/StatusTypes';
@@ -15,8 +15,13 @@ import DefaultButton from '../../../components/DefaultButton';
 import Select from './Select';
 
 function SettingsWindow({ onClose }: { onClose: () => void }) {
+  const [saveToLocalStorage, setSaveToLocalStorage] = useState(false);
   const dispatch = useAppDispatch();
   const { createGame } = useCreateGame();
+
+  const gameId = nanoid();
+  const userId = nanoid();
+  const board = createBoard();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,17 +31,12 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
     const { time, side } = Object.fromEntries(data);
 
     // 2) Інші необхідні дані
-    const gameId = nanoid();
-    const userId = nanoid();
-    const board = createBoard();
-
     const [minutes, extraSeconds] = convertGameTimeToMinutesAndExtraSeconds(
       time as string
     );
 
     // 3) Додати IDs для ідентифікації
     dispatch(addIDs({ gameId, userId }));
-    setIDsToLocalStorage(gameId, userId);
 
     // 4) Додати гру на сервер на сервері
     createGame({
@@ -47,10 +47,17 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
       time: minutes,
       extraSeconds,
     });
+    setSaveToLocalStorage(true);
 
     // Закрити модальне вікно
     onClose();
   }
+
+  useEffect(() => {
+    if (saveToLocalStorage) {
+      setIDsToLocalStorage(gameId, userId);
+    }
+  }, [saveToLocalStorage, gameId, userId]);
 
   return (
     <Wrapper onSubmit={handleSubmit}>

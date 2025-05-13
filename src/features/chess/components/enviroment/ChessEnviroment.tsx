@@ -52,6 +52,7 @@ function ChessEnviroment() {
   useEffect(() => {
     if (!gameId) {
       const { gameId: gameIdLS, userId: userIdLS } = getIDsFromLocalStorage();
+      console.log(gameIdLS, userIdLS);
 
       if (gameIdLS && userIdLS) {
         dispatch(addIDs({ gameId: gameIdLS, userId: userIdLS }));
