@@ -9,6 +9,7 @@ import { reset as resetChess } from '../service/chess';
 import { clearIDsFromLocalStorage } from '../utils/helpers';
 import DefaultButton from '../../components/DefaultButton';
 import useDeleteGame from '../hooks/useDeleteGame';
+import { useEffect } from 'react';
 
 function GameOverWindow() {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ function GameOverWindow() {
   const { deleteGame } = useDeleteGame();
   const turn = useAppSelector(state => state.timer.turn);
   const {
-    isGameOver: { message, type },
+    isGameOver: { is: isGameOver, message, type },
     gameId,
   } = useAppSelector(state => state.status);
 
@@ -24,15 +25,20 @@ function GameOverWindow() {
   const messageWin = `${sideWin} win. ${message}.`;
   const messageDraw = `${message}.`;
 
+  useEffect(() => {
+    if (isGameOver) {
+      deleteGame(gameId!);
+      clearIDsFromLocalStorage();
+    }
+  }, [isGameOver, gameId, deleteGame]);
+
   function handleBackToMainMenu() {
-    deleteGame(gameId!);
     navigate('menu');
     resetChess();
     dispatch(resetStatus());
     dispatch(resetBoard());
     dispatch(resetTimer());
     dispatch(closeModalWindow());
-    clearIDsFromLocalStorage();
   }
 
   return (
