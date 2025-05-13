@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { nanoid } from '@reduxjs/toolkit';
 import { SideColor } from '../../types/StatusTypes';
@@ -19,8 +19,8 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
   const { createGame } = useCreateGame();
 
-  const gameId = nanoid();
-  const userId = nanoid();
+  const gameId = useRef(nanoid());
+  const userId = useRef(nanoid());
   const board = createBoard();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -36,7 +36,7 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
     );
 
     // 3) Додати IDs для ідентифікації
-    dispatch(addIDs({ gameId, userId }));
+    dispatch(addIDs({ gameId: gameId.current, userId: userId.current }));
 
     // 4) Додати гру на сервер на сервері
     createGame({
@@ -55,9 +55,9 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     if (saveToLocalStorage) {
-      setIDsToLocalStorage(gameId, userId);
+      setIDsToLocalStorage(gameId.current, userId.current);
     }
-  }, [saveToLocalStorage, gameId, userId]);
+  }, [saveToLocalStorage]);
 
   return (
     <Wrapper onSubmit={handleSubmit}>
