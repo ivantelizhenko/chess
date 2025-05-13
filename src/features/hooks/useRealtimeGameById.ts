@@ -21,7 +21,7 @@ function useRealtimeGameById() {
         },
         payload => {
           // getNewData(payload.new); // або обробити як потрібно
-          console.log(payload.new.timeWhite);
+          console.log(payload.new);
         }
       )
       .subscribe();

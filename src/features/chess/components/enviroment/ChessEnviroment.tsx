@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
 import { useAppDispatch, useAppSelector } from '../../../../store/store';
 import {
   runTime,
@@ -8,36 +8,35 @@ import {
   setExtraSeconds,
 } from '../../../store/timerSlice';
 import {
-  addGameId,
-  addUserId,
+  addIDs,
   clearOfferDraw,
   setGameOver,
   setSide,
   toOfferDrawSend,
 } from '../../../store/statusSlice';
 import { openModalWindow } from '../../../store/uiSlice';
-import { SideColor } from '../../../types/StatusTypes';
-
+import { setBoard } from '../../../store/boardSlice';
 import useInterval from '../../../hooks/useInterval';
-
-import ChessBoard from '../board/ChessBoard';
+import useGetGame from '../../../hooks/useGetGame';
+import useRealtimeGameById from '../../../hooks/useRealtimeGameById';
+import useUpdateTime from '../../../hooks/useUpdateTime';
+import { SideColor } from '../../../types/StatusTypes';
 import GameOverWindow from '../../../modals/GameOverWindow';
 import Question from '../../../modals/Question';
 import Buttons from '../controls/Buttons';
 import Time from '../controls/Time';
 import ModalWindow from '../../../../components/ModalWindow';
-import useGetGame from '../../../hooks/useGetGame';
-import { setBoard } from '../../../store/boardSlice';
 import Spinner from '../../../../components/Spinner';
-import { useNavigate } from 'react-router-dom';
-import useRealtimeGameById from '../../../hooks/useRealtimeGameById';
-import useUpdateTime from '../../../hooks/useUpdateTime';
+import ChessBoard from '../board/ChessBoard';
+
+import {
+  clearIDsFromLocalStorage,
+  getIDsFromLocalStorage,
+} from '../../../utils/helpers';
 
 function ChessEnviroment() {
   const dispatch = useAppDispatch();
-
   const navigate = useNavigate();
-
   const { isGameOver, offerDraw, side, gameId } = useAppSelector(
     state => state.status
   );
@@ -52,12 +51,10 @@ function ChessEnviroment() {
   // Взяття gameId з localStorage, якщо воно там є. Але працює тільки при перезавантажені сторінки.
   useEffect(() => {
     if (!gameId) {
-      const gameIdLS = localStorage.getItem('chess/gameId');
-      const userIdLS = localStorage.getItem('chess/userId');
+      const { gameId: gameIdLS, userId: userIdLS } = getIDsFromLocalStorage();
 
       if (gameIdLS && userIdLS) {
-        dispatch(addGameId(gameIdLS));
-        dispatch(addUserId(userIdLS));
+        dispatch(addIDs({ gameId: gameIdLS, userId: userIdLS }));
       }
 
       if (!gameIdLS) {
@@ -74,23 +71,22 @@ function ChessEnviroment() {
   }, [navigate, gameId]);
 
   // Якщо є gameId і гра за цим id, то беруться дані з сервера
-  const onlyOneTime = useRef<boolean>(false);
+  const onlyOneTimeGetNewGameData = useRef<boolean>(false);
   useEffect(() => {
-    if (!onlyOneTime.current) {
+    if (!onlyOneTimeGetNewGameData.current) {
       if (newGame && newGame.length === 1) {
-        console.log('unfortunately i work', onlyOneTime.current);
+        onlyOneTimeGetNewGameData.current = true;
         const { sideWhite, extraSeconds, board, timeWhite, timeBlack } =
           newGame[0];
         const sideAPI = sideWhite ? 'w' : 'b';
+
         dispatch(setActiveTime({ timeWhite, timeBlack }));
         dispatch(setExtraSeconds(extraSeconds));
         dispatch(setSide(sideAPI as SideColor));
         dispatch(setBoard(board));
-
-        onlyOneTime.current = true;
       }
       if (newGame && newGame.length === 0) {
-        localStorage.clear();
+        clearIDsFromLocalStorage();
       }
     }
   }, [isLoading, dispatch, newGame, navigate]);
@@ -100,8 +96,7 @@ function ChessEnviroment() {
     dispatch(runTime());
     updateTime();
   }
-
-  useInterval(handleRunTime, !isStartTimer || isGameOver.is ? null : 1000);
+  useInterval(handleRunTime, isGameOver.is && !isStartTimer ? null : 1000);
 
   // Слідкування за часом
   useEffect(() => {

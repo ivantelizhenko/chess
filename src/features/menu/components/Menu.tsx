@@ -1,25 +1,34 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../store/store';
+import { addIDs } from '../../store/statusSlice';
+import { getIDsFromLocalStorage } from '../../utils/helpers';
 import DefaultButton from '../../../components/DefaultButton';
 import ModalWindow from '../../../components/ModalWindow';
 import SettingsWindow from './SettingsWindow';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../store/store';
 
 function Menu() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const gameId = useAppSelector(state => state.status.gameId);
+  const { gameId: gameIdLS, userId: userIdLS } = getIDsFromLocalStorage();
   const [openModal, setOpenModal] = useState<boolean>(false);
+
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
-
-  const navigate = useNavigate();
-  const gameId = useAppSelector(state => state.status.gameId);
 
   useEffect(() => {
     if (gameId) {
       navigate(`/chess/${gameId}`);
     }
   }, [navigate, gameId]);
+
+  useEffect(() => {
+    if (gameIdLS && userIdLS) {
+      dispatch(addIDs({ gameId: gameIdLS, userId: userIdLS }));
+    }
+  }, [dispatch, gameIdLS, userIdLS]);
 
   return (
     <Wrapper>

@@ -1,18 +1,18 @@
 import { FormEvent } from 'react';
 import styled from 'styled-components';
-
-import DefaultButton from '../../../components/DefaultButton';
-import Select from './Select';
-import { MENU_SELECT_DATA } from '../../utils/constants';
-import { useAppDispatch } from '../../../store/store';
-import { addGameId, addUserId } from '../../store/statusSlice';
-import { SideColor } from '../../types/StatusTypes';
-import useCreateGame from '../../hooks/useCreateGame';
 import { nanoid } from '@reduxjs/toolkit';
+import { SideColor } from '../../types/StatusTypes';
+import { useAppDispatch } from '../../../store/store';
+import { addIDs } from '../../store/statusSlice';
 import {
   convertGameTimeToMinutesAndExtraSeconds,
   createBoard,
+  setIDsToLocalStorage,
 } from '../../utils/helpers';
+import { MENU_SELECT_DATA } from '../../utils/constants';
+import useCreateGame from '../../hooks/useCreateGame';
+import DefaultButton from '../../../components/DefaultButton';
+import Select from './Select';
 
 function SettingsWindow({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
@@ -34,10 +34,11 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
       time as string
     );
 
-    dispatch(addGameId(gameId));
-    dispatch(addUserId(userId));
+    // 3) Додати IDs для ідентифікації
+    dispatch(addIDs({ gameId, userId }));
+    setIDsToLocalStorage(gameId, userId);
 
-    // 2) Додати гру на сервер на сервері
+    // 4) Додати гру на сервер на сервері
     createGame({
       gameId,
       userId,
@@ -46,9 +47,6 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
       time: minutes,
       extraSeconds,
     });
-
-    localStorage.setItem('chess/userId', userId);
-    localStorage.setItem('chess/gameId', gameId);
 
     // Закрити модальне вікно
     onClose();

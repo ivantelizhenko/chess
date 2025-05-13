@@ -1,21 +1,21 @@
 import styled from 'styled-components';
-
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import DefaultButton from '../../components/DefaultButton';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { reset as resetStatus } from '../store/statusSlice';
 import { reset as resetBoard } from '../store/boardSlice';
 import { reset as resetTimer } from '../store/timerSlice';
-import { reset as resetChess } from '../service/chess';
 import { closeModalWindow } from '../store/uiSlice';
+import { reset as resetChess } from '../service/chess';
+import { clearIDsFromLocalStorage } from '../utils/helpers';
+import DefaultButton from '../../components/DefaultButton';
 
 function GameOverWindow() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const turn = useAppSelector(state => state.timer.turn);
   const { message, type } = useAppSelector(state => state.status.isGameOver);
-  const sideWin = turn === 'w' ? 'Black' : 'White';
 
+  const sideWin = turn === 'w' ? 'Black' : 'White';
   const messageWin = `${sideWin} win. ${message}.`;
   const messageDraw = `${message}.`;
 
@@ -26,6 +26,7 @@ function GameOverWindow() {
     dispatch(resetBoard());
     dispatch(resetTimer());
     dispatch(closeModalWindow());
+    clearIDsFromLocalStorage();
   }
 
   return (

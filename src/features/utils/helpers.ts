@@ -101,3 +101,20 @@ export function convertGameTimeToMinutesAndExtraSeconds(time: string) {
 
   return [minutes, extraSeconds];
 }
+
+export function setIDsToLocalStorage(gameId: string, userId: string) {
+  localStorage.setItem('chess/userId', userId);
+  localStorage.setItem('chess/gameId', gameId);
+}
+
+export function getIDsFromLocalStorage() {
+  const userId = localStorage.getItem('chess/userId');
+  const gameId = localStorage.getItem('chess/gameId');
+
+  return { gameId, userId };
+}
+
+export function clearIDsFromLocalStorage() {
+  localStorage.setItem('chess/userId', '');
+  localStorage.setItem('chess/gameId', '');
+}
