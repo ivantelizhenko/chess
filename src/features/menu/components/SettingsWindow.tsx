@@ -40,8 +40,8 @@ function SettingsWindow({ onClose }: { onClose: () => void }) {
 
     // 4) Додати гру на сервер на сервері
     createGame({
-      gameId,
-      userId,
+      gameId: gameId.current,
+      userId: userId.current,
       side: side as SideColor,
       board,
       time: minutes,
